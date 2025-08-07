@@ -10,7 +10,6 @@
   let loading = false;
   let error = '';
 
-  // Vérifier si l'utilisateur est déjà connecté
   onMount(async () => {
     const isAuthenticated = await authService.verifyAuth();
     if (isAuthenticated) {
@@ -19,7 +18,7 @@
   });
 
   async function handleLogin() {
-    if (!email || !password) {
+    if (!email.trim() || !password.trim()) {
       error = 'Veuillez remplir tous les champs';
       return;
     }
@@ -50,42 +49,40 @@
 </svelte:head>
 
 <div class="login-page">
+  <div class="login-background"></div>
+  
   <div class="login-container">
     <div class="login-header">
-      <div class="login-logo">📚</div>
-      <div class="login-subtitle">Nom de l'application que j'ai pas encore</div>
+      <img src="/logo.png" alt="LibraS" class="login-logo-img" />
+      <h1 class="login-brand-name">Libras-admin</h1>
     </div>
+    
+    <form on:submit|preventDefault={handleLogin} class="login-form">
+      <Input
+        label="Email"
+        type="email"
+        bind:value={email}
+        placeholder="admin@example.com"
+        required
+        disabled={loading}
+      />
 
-    <div class="login-form">
-      <h2 class="login-title">Connexion Admin</h2>
-      
-      <form on:submit|preventDefault={handleLogin} class="form">
-        <Input
-          label="Email"
-          type="email"
-          bind:value={email}
-          placeholder="admin@example.com"
-          required
-          disabled={loading}
-        />
+      <Input
+        label="Mot de passe"
+        type="password"
+        bind:value={password}
+        placeholder="••••••••"
+        required
+        disabled={loading}
+      />
 
-        <Input
-          label="Mot de passe"
-          type="password"
-          bind:value={password}
-          placeholder="••••••••"
-          required
-          disabled={loading}
-        />
+      {#if error}
+        <div class="error-message">{error}</div>
+      {/if}
 
-        {#if error}
-          <div class="error-message">{error}</div>
-        {/if}
-
-        <Button type="submit" disabled={loading} loading={loading}>
-          {loading ? 'Connexion...' : 'Se connecter'}
-        </Button>
-      </form>
-    </div>
+      <Button type="submit" disabled={loading} loading={loading}>
+        {loading ? 'Connexion...' : 'Se connecter'}
+      </Button>
+    </form>
   </div>
 </div>
