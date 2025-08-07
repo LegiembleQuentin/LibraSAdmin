@@ -29,7 +29,7 @@
   <input
     {type}
     {placeholder}
-    {value}
+    bind:value
     {required}
     {disabled}
     id="{label.toLowerCase()}"
