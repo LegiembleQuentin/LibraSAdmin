@@ -11,9 +11,8 @@
   let error = '';
 
   onMount(async () => {
-    const isAuthenticated = await authService.verifyAuth();
-    if (isAuthenticated) {
-      goto('/dashboard');
+    if ($authStore.isAuthenticated) {
+      goto('/livres');
     }
   });
 
@@ -29,7 +28,7 @@
     try {
       const credentials: LoginCredentials = { email, password };
       await authService.login(credentials);
-      goto('/dashboard');
+      goto('/livres');
     } catch (err) {
       error = err instanceof Error ? err.message : 'Une erreur est survenue';
     } finally {

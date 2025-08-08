@@ -5,6 +5,7 @@
   --color-black: #000000;        /* Noir */
   --color-white: #FFFFFF;        /* Blanc */
   --color-accent: #FFE815;       /* Jaune vif */
+  --color-text: #FFFFFF;         /* Texte par défaut (blanc) */
   
   /* Dégradés */
   --gradient-background: linear-gradient(135deg, var(--color-black) 0%, var(--color-primary) 100%);
@@ -49,7 +50,7 @@ html, body {
   overflow-x: hidden;
   font-family: var(--font-secondary);
   background: var(--gradient-background);
-  color: var(--color-white);
+  color: var(--color-text);
 }
 
 body {

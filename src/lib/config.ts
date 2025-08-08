@@ -4,8 +4,7 @@ export const API_CONFIG = {
   API_KEY: import.meta.env.PUBLIC_API_KEY || 'Y7RFjqnZ7dBIgFFL/yhbapTwEh9pt1EDwKsPEsA4TYfgL/vEQbafmkw8k2cYJ9lgjETj37hQgh8K7d8ZtmfM0g==',
   ENDPOINTS: {
     ADMIN_LOGIN: '/api/admin/login',
-    ADMIN_VERIFY: '/api/admin/verify',
-    ADMIN_DASHBOARD: '/api/admin/dashboard'
+    ADMIN_VERIFY: '/api/admin/verify'
   }
 };
 
