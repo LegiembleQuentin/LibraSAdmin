@@ -40,7 +40,7 @@ class AuthService {
     this.loadFromStorage();
   }
 
-  private loadFromStorage() {
+  loadFromStorage() {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem(TOKEN_KEY);
       const userJson = localStorage.getItem(USER_KEY);
@@ -48,15 +48,25 @@ class AuthService {
       if (token && userJson) {
         try {
           const user = JSON.parse(userJson);
-          authStore.set({
-            isAuthenticated: true,
-            user,
-            token
-          });
+          if (user.roles && user.roles.includes('ADMIN')) {
+            authStore.set({
+              isAuthenticated: true,
+              user,
+              token
+            });
+          } else {
+            this.logout();
+          }
         } catch (error) {
           console.error('Erreur lors du chargement des données d\'authentification:', error);
           this.logout();
         }
+      } else {
+        authStore.set({
+          isAuthenticated: false,
+          user: null,
+          token: null
+        });
       }
     }
   }

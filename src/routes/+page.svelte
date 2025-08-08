@@ -11,8 +11,7 @@
   let error = '';
 
   onMount(async () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
-    if (token) {
+    if ($authStore.isAuthenticated) {
       goto('/livres');
     }
   });

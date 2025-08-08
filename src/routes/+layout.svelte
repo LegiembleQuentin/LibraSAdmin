@@ -1,18 +1,21 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
-  import { authService } from '$lib/services/authService';
+  import { authStore, authService } from '$lib/services/authService';
   import Navbar from '$lib/components/Navbar.svelte';
 
   let isAuthenticated = false;
-  let loading = true;
 
-  onMount(async () => {
-    isAuthenticated = await authService.verifyAuth();
-    loading = false;
+  onMount(() => {
+    authService.loadFromStorage();
+    isAuthenticated = $authStore.isAuthenticated;
   });
 
-  $: showNavbar = isAuthenticated && !loading && $page.url.pathname !== '/';
+  $: {
+    isAuthenticated = $authStore.isAuthenticated;
+  }
+
+  $: showNavbar = isAuthenticated && $page.url.pathname !== '/';
 </script>
 
 <svelte:head>
