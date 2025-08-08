@@ -1,0 +1,85 @@
+import { API_CONFIG, buildApiUrl } from '../config';
+
+export interface BookFilter {
+  tags?: string[];
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  author?: string;
+  isCompleted?: boolean;
+  minVolumes?: number;
+  maxVolumes?: number;
+  minRating?: number;
+  maxRating?: number;
+}
+
+export interface Book {
+  id: number;
+  synopsis?: string;
+  names: string[];
+  dateStart: string;
+  dateEnd?: string;
+  nbVolume: number;
+  note?: number;
+  imgUrl?: string;
+  tags: Tag[];
+  authors: Author[];
+  relatedBooks: Book[];
+  sameAuthorBooks: Book[];
+  createdAt?: string;
+  modifiedAt?: string;
+  userStatus?: string;
+  userRating?: number;
+  userCurrentVolume?: number;
+  userMatch?: number;
+}
+
+export interface Tag {
+  id: number;
+  name: string;
+}
+
+export interface Author {
+  id: number;
+  name: string;
+}
+
+export interface BookResponse {
+  content: Book[];
+  totalElements: number;
+  totalPages: number;
+  currentPage: number;
+  size: number;
+}
+
+class BookService {
+  private getAuthHeaders(): HeadersInit {
+    const token = localStorage.getItem('admin_token');
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      'API-KEY': API_CONFIG.API_KEY
+    };
+  }
+
+  async getBooksWithFilters(filter: BookFilter = {}, page: number = 0, size: number = 20): Promise<BookResponse> {
+    const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.ADMIN_BOOKS)}?page=${page}&size=${size}`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(filter)
+    });
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des livres');
+    }
+
+    return response.json();
+  }
+
+  async getAllBooks(): Promise<Book[]> {
+    const response = await this.getBooksWithFilters({}, 0, 1000);
+    return response.content;
+  }
+}
+
+export const bookService = new BookService();
