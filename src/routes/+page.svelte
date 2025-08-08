@@ -11,10 +11,9 @@
   let error = '';
 
   onMount(async () => {
-    // Vérifier si l'utilisateur est déjà connecté
     const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
     if (token) {
-      goto('/dashboard');
+      goto('/livres');
     }
   });
 
@@ -30,7 +29,7 @@
     try {
       const credentials: LoginCredentials = { email, password };
       await authService.login(credentials);
-      goto('/dashboard');
+      goto('/livres');
     } catch (err) {
       error = err instanceof Error ? err.message : 'Une erreur est survenue';
     } finally {

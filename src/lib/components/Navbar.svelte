@@ -5,7 +5,6 @@
   import Button from './Button.svelte';
 
   const navItems = [
-    { href: '/dashboard', label: 'Dashboard' },
     { href: '/livres', label: 'Livres' },
     { href: '/utilisateurs', label: 'Utilisateurs' },
     { href: '/stats', label: 'Stats' },
