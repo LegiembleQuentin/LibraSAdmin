@@ -13,7 +13,6 @@
   }
 
   onMount(async () => {
-    // Vérifier l'authentification
     const isAuthenticated = await authService.verifyAuth();
     if (!isAuthenticated) {
       goto('/');

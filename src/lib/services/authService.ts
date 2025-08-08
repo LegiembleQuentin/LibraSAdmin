@@ -1,7 +1,6 @@
 import { API_CONFIG, buildApiUrl } from '../config';
 import { writable } from 'svelte/store';
 
-// Types
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -23,7 +22,6 @@ export interface LoginResponse {
   roles: string[];
 }
 
-// Store pour l'état d'authentification
 export const authStore = writable<{
   isAuthenticated: boolean;
   user: AdminUser | null;
@@ -34,7 +32,6 @@ export const authStore = writable<{
   token: null
 });
 
-// Clé pour le localStorage
 const TOKEN_KEY = 'admin_token';
 const USER_KEY = 'admin_user';
 
@@ -43,7 +40,6 @@ class AuthService {
     this.loadFromStorage();
   }
 
-  // Charger les données depuis le localStorage
   private loadFromStorage() {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem(TOKEN_KEY);
@@ -77,11 +73,17 @@ class AuthService {
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Échec de la connexion');
+      // Message d'erreur générique pour ne pas révéler d'informations
+      throw new Error('Email ou mot de passe incorrect');
     }
 
     const loginResponse: LoginResponse = await response.json();
+    
+    // Vérifier si l'utilisateur a le rôle ADMIN
+    if (!loginResponse.roles || !loginResponse.roles.includes('ADMIN')) {
+      // Message d'erreur générique même si les credentials sont corrects
+      throw new Error('Email ou mot de passe incorrect');
+    }
     
     // Stocker les données d'authentification
     const user: AdminUser = {
@@ -105,30 +107,24 @@ class AuthService {
     return loginResponse;
   }
 
-  // Vérifier l'authentification
+  // Vérifier l'authentification (vérification locale uniquement)
   async verifyAuth(): Promise<boolean> {
     const token = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null;
+    const userJson = typeof window !== 'undefined' ? localStorage.getItem(USER_KEY) : null;
     
-    if (!token) {
+    if (!token || !userJson) {
       return false;
     }
 
     try {
-      const response = await fetch(buildApiUrl(API_CONFIG.ENDPOINTS.ADMIN_VERIFY), {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'API-KEY': API_CONFIG.API_KEY
-        }
-      });
-
-      if (!response.ok) {
+      const user = JSON.parse(userJson);
+      // Vérifier si l'utilisateur a le rôle ADMIN
+      if (!user.roles || !user.roles.includes('ADMIN')) {
         this.logout();
         return false;
       }
-
-      const verifyResponse = await response.json();
-      return verifyResponse.valid;
+      
+      return true;
     } catch (error) {
       console.error('Erreur lors de la vérification de l\'authentification:', error);
       this.logout();

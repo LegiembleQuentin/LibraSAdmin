@@ -11,8 +11,9 @@
   let error = '';
 
   onMount(async () => {
-    const isAuthenticated = await authService.verifyAuth();
-    if (isAuthenticated) {
+    // Vérifier si l'utilisateur est déjà connecté
+    const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : null;
+    if (token) {
       goto('/dashboard');
     }
   });
