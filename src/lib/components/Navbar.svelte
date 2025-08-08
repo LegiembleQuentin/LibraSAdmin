@@ -5,11 +5,11 @@
   import Button from './Button.svelte';
 
   const navItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { href: '/livres', label: 'Livres', icon: '📚' },
-    { href: '/utilisateurs', label: 'Utilisateurs', icon: '👥' },
-    { href: '/stats', label: 'Stats', icon: '📈' },
-    { href: '/options', label: 'Options', icon: '⚙️' }
+    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/livres', label: 'Livres' },
+    { href: '/utilisateurs', label: 'Utilisateurs' },
+    { href: '/stats', label: 'Stats' },
+    { href: '/options', label: 'Options' }
   ];
 
   function handleLogout() {
@@ -35,8 +35,7 @@
         class="nav-link"
         class:active={isActive(item.href)}
       >
-        <span class="nav-icon">{item.icon}</span>
-        <span class="nav-label">{item.label}</span>
+        {item.label}
       </a>
     {/each}
   </div>

@@ -45,7 +45,7 @@
   font-family: var(--font-primary);
   font-weight: 700;
   font-size: 2rem;
-  color: var(--color-black);
+  color: var(--color-text);
   margin: 0;
 }
 
@@ -53,7 +53,7 @@
   font-family: var(--font-primary);
   font-weight: 600;
   font-size: 1.5rem;
-  color: var(--color-black);
+  color: var(--color-text);
   margin: var(--spacing-lg) 0;
 }
 
@@ -80,14 +80,14 @@
   font-family: var(--font-primary);
   font-weight: 700;
   font-size: 2.5rem;
-  color: var(--color-black);
+  color: var(--color-text);
   margin: 0 0 var(--spacing-sm) 0;
 }
 
 .dashboard-subtitle {
   font-family: var(--font-secondary);
   font-size: 1.1rem;
-  color: var(--color-black);
+  color: var(--color-text);
   opacity: 0.8;
   margin: 0;
 }
@@ -102,14 +102,14 @@
   font-family: var(--font-primary);
   font-weight: 700;
   font-size: 2rem;
-  color: var(--color-black);
+  color: var(--color-text);
   margin: var(--spacing-xl) 0 var(--spacing-lg) 0;
 }
 
 .coming-soon-text {
   font-family: var(--font-secondary);
   font-size: 1.1rem;
-  color: var(--color-black);
+  color: var(--color-text);
   opacity: 0.8;
   line-height: 1.6;
 }
@@ -142,14 +142,14 @@
   font-family: var(--font-primary);
   font-weight: 700;
   font-size: 2.5rem;
-  color: var(--color-black);
+  color: var(--color-text);
   margin: 0 0 var(--spacing-sm) 0;
 }
 
 .page-subtitle {
   font-family: var(--font-secondary);
   font-size: 1.1rem;
-  color: var(--color-black);
+  color: var(--color-text);
   opacity: 0.8;
   margin: 0;
 }
