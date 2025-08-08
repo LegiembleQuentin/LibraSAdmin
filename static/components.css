@@ -35,18 +35,19 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-md) var(--spacing-xl);
+  padding: var(--spacing-sm) var(--spacing-lg);
   background: var(--color-accent);
   border: none;
   border-radius: var(--border-radius-md);
-  font-family: var(--font-primary);
-  font-weight: 600;
-  font-size: 1rem;
+  font-family: var(--font-secondary);
+  font-weight: 500;
+  font-size: 0.9rem;
   color: var(--color-black);
   text-decoration: none;
   cursor: pointer;
   transition: var(--transition-normal);
   box-shadow: var(--shadow-sm);
+  min-width: auto;
 }
 
 .btn:hover {
@@ -70,12 +71,24 @@
   border: 1px solid var(--color-accent);
   color: var(--color-accent);
   transition: all var(--transition-normal);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: var(--border-radius-md);
 }
 
 .btn-secondary:hover {
   background: var(--color-accent);
   color: var(--color-black);
   transform: translateY(-1px);
+}
+
+.navbar-actions .btn-secondary {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: var(--border-radius-sm);
+  min-width: auto;
 }
 
 /* Card */
