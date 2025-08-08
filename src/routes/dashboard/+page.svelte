@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { authService, authStore } from '../../lib/services/authService';
-  import Button from '$lib/components/Button.svelte';
 
   let user: any = null;
   let loading = true;
@@ -20,11 +19,6 @@
     }
     loading = false;
   });
-
-  function handleLogout() {
-    authService.logout();
-    goto('/');
-  }
 </script>
 
 <svelte:head>
@@ -50,16 +44,10 @@
     <div class="dashboard-content">
       <h2 class="coming-soon">🚧 À venir</h2>
       <p class="coming-soon-text">
-        Le dashboard administrateur est en cours de développement. 
-        Les fonctionnalités de gestion des utilisateurs, livres et commentaires 
+        Le dashboard administrateur est en cours de développement.
+        Les fonctionnalités de gestion des utilisateurs, livres et commentaires
         seront bientôt disponibles.
       </p>
-      
-      <div style="margin-top: var(--spacing-xl);">
-        <Button variant="secondary" on:click={handleLogout}>
-          Se déconnecter
-        </Button>
-      </div>
     </div>
   </div>
 {/if}

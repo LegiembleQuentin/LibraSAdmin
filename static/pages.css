@@ -1,112 +1,173 @@
-/* Styles spécifiques aux pages */
+/* Pages spécifiques */
 
-/* Page de login */
+/* Login page */
 .login-page {
   min-height: 100vh;
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-md);
-  background: var(--gradient-background);
   position: relative;
   overflow: hidden;
+  width: 100%;
 }
 
-.login-background::before {
-  content: '';
+.login-background {
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 232, 21, 0.05) 0%, transparent 70%);
-  animation: float 30s ease-in-out infinite;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-background);
+  z-index: -1;
   pointer-events: none;
-}
-
-@keyframes float {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(10px, -10px) rotate(1deg); }
-  50% { transform: translate(-5px, 5px) rotate(-1deg); }
-  75% { transform: translate(-10px, -5px) rotate(0.5deg); }
 }
 
 .login-container {
   width: 100%;
   max-width: 400px;
+  padding: var(--spacing-xl);
   text-align: center;
+  z-index: 1;
 }
 
 .login-header {
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: var(--spacing-xl);
 }
 
 .login-logo-img {
   width: 80px;
   height: 80px;
+  object-fit: contain;
   margin-bottom: var(--spacing-md);
-  filter: drop-shadow(0 0 25px rgba(255, 232, 21, 0.4));
 }
 
 .login-brand-name {
   font-family: var(--font-primary);
-  font-size: 2.5rem;
   font-weight: 700;
-  color: var(--color-accent);
-  text-shadow: 0 0 30px rgba(255, 232, 21, 0.4);
-  letter-spacing: 2px;
+  font-size: 2rem;
+  color: var(--color-black);
+  margin: 0;
+}
+
+.login-title {
+  font-family: var(--font-primary);
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--color-black);
+  margin: var(--spacing-lg) 0;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+  width: 100%;
 }
 
-/* Page dashboard */
+/* Dashboard page */
 .dashboard-page {
   min-height: 100vh;
+  background: var(--gradient-background);
   padding: var(--spacing-xl);
 }
 
 .dashboard-header {
-  margin-bottom: var(--spacing-2xl);
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
 }
 
 .dashboard-title {
   font-family: var(--font-primary);
-  font-size: 2rem;
   font-weight: 700;
-  color: var(--color-accent);
-  margin-bottom: var(--spacing-sm);
+  font-size: 2.5rem;
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-sm) 0;
 }
 
 .dashboard-subtitle {
   font-family: var(--font-secondary);
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-black);
+  opacity: 0.8;
+  margin: 0;
 }
 
 .dashboard-content {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-2xl);
+  max-width: 800px;
+  margin: 0 auto;
   text-align: center;
 }
 
 .coming-soon {
   font-family: var(--font-primary);
-  font-size: 1.5rem;
-  color: var(--color-accent);
-  margin-bottom: var(--spacing-md);
+  font-weight: 700;
+  font-size: 2rem;
+  color: var(--color-black);
+  margin: var(--spacing-xl) 0 var(--spacing-lg) 0;
 }
 
 .coming-soon-text {
   font-family: var(--font-secondary);
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-black);
+  opacity: 0.8;
   line-height: 1.6;
+}
+
+/* Layout avec navbar */
+.main-content {
+  min-height: 100vh;
+  background: var(--gradient-background);
+}
+
+.main-content.with-navbar {
+  padding-top: 0;
+}
+
+/* Pages génériques */
+.page-container {
+  min-height: 100vh;
+  padding: var(--spacing-xl);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-xl) 0;
+}
+
+.page-title {
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: var(--color-black);
+  margin: 0 0 var(--spacing-sm) 0;
+}
+
+.page-subtitle {
+  font-family: var(--font-secondary);
+  font-size: 1.1rem;
+  color: var(--color-black);
+  opacity: 0.8;
+  margin: 0;
+}
+
+.page-content {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.page-content .coming-soon {
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.page-content .coming-soon-text {
+  margin: 0;
 }
