@@ -119,92 +119,84 @@
       <div class="filter-group">
         <Input
           bind:value={searchTerm}
-          placeholder="Titre, auteur, description..."
-          size="small"
-          label="Recherche générale"
+          label="Titre"
+          placeholder="Titre"
+          size="medium"
         />
       </div>
-      
+
       <div class="filter-group">
         <Input
           bind:value={author}
-          placeholder="Nom de l'auteur"
-          size="small"
           label="Auteur"
+          placeholder="Nom de l'auteur"
+          size="medium"
         />
       </div>
-      
-      <div class="filter-group range-group">
-        <div class="range-inputs">
-          <Input
-            type="date"
-            bind:value={dateFrom}
-            size="small"
-            label="Date de début"
-          />
-          <Input
-            type="date"
-            bind:value={dateTo}
-            size="small"
-            label="Date de fin"
-          />
-        </div>
-      </div>
-      
-      <div class="filter-group range-group volume-filters">
-        <div class="range-inputs">
-          <Input
-            type="number"
-            bind:value={minVolumes}
-            placeholder="Min"
-            size="small"
-            label="Nombre de volumes (min)"
-          />
-          <Input
-            type="number"
-            bind:value={maxVolumes}
-            placeholder="Max"
-            size="small"
-            label="Nombre de volumes (max)"
-          />
-        </div>
-      </div>
-      
-      <div class="filter-group range-group note-filters">
-        <div class="range-inputs">
-          <Input
-            type="number"
-            bind:value={minRating}
-            placeholder="Min"
-            min="0"
-            max="5"
-            step="0.1"
-            size="small"
-            label="Note (min)"
-          />
-          <Input
-            type="number"
-            bind:value={maxRating}
-            placeholder="Max"
-            min="0"
-            max="5"
-            step="0.1"
-            size="small"
-            label="Note (max)"
-          />
-        </div>
-      </div>
-      
+
       <div class="filter-group">
-        <Select 
-          bind:value={isCompleted} 
-          size="small" 
+        <Select
+          bind:value={isCompleted}
           label="Statut"
           options={[
-            { value: undefined, label: 'Tous' },
-            { value: true, label: 'Terminé' },
+            { value: undefined, label: 'Tous les statuts' },
+            { value: true, label: 'Complété' },
             { value: false, label: 'En cours' }
           ]}
+          size="medium"
+        />
+      </div>
+
+      <div class="volume-filters">
+        <Input
+          bind:value={minVolumes}
+          label="Nb volumes (min)"
+          type="number"
+          min="0"
+          size="medium"
+        />
+        <Input
+          bind:value={maxVolumes}
+          label="Nb volumes (max)"
+          type="number"
+          min="0"
+          size="medium"
+        />
+      </div>
+
+      <div class="note-filters">
+        <Input
+          bind:value={minRating}
+          label="Note (min)"
+          type="number"
+          min="0"
+          max="5"
+          step="0.1"
+          size="medium"
+        />
+        <Input
+          bind:value={maxRating}
+          label="Note (max)"
+          type="number"
+          min="0"
+          max="5"
+          step="0.1"
+          size="medium"
+        />
+      </div>
+
+      <div class="date-filters">
+        <Input
+          bind:value={dateFrom}
+          label="Date de début"
+          type="date"
+          size="medium"
+        />
+        <Input
+          bind:value={dateTo}
+          label="Date de fin"
+          type="date"
+          size="medium"
         />
       </div>
     </div>
@@ -343,8 +335,8 @@
 
   .filters-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
   }
 
   .filter-group {
@@ -367,22 +359,46 @@
     gap: 0.5rem;
   }
 
-
-
-  .volume-filters {
-    grid-column: span 2;
+  .volume-filters,
+  .note-filters,
+  .date-filters {
+    display: flex;
+    gap: 0.5rem;
   }
 
   .note-filters {
-    grid-column: span 2;
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+
+  .volume-filters .input-wrapper,
+  .note-filters .input-wrapper,
+  .date-filters .input-wrapper {
+    flex: 1;
   }
 
   @media (max-width: 1200px) {
-    .volume-filters {
-      grid-column: span 1;
+    .filters-grid {
+      grid-template-columns: repeat(2, 1fr);
     }
-    .note-filters {
+
+    .volume-filters,
+    .note-filters,
+    .date-filters {
+      grid-column: span 2;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .filters-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .volume-filters,
+    .note-filters,
+    .date-filters {
       grid-column: span 1;
+      flex-direction: column;
     }
   }
 
@@ -644,3 +660,4 @@
 
   }
 </style>
+
