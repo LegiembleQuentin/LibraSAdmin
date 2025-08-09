@@ -12,7 +12,7 @@
 
   onMount(async () => {
     if ($authStore.isAuthenticated) {
-      goto('/livres');
+      goto('/books');
     }
   });
 
@@ -28,7 +28,7 @@
     try {
       const credentials: LoginCredentials = { email, password };
       await authService.login(credentials);
-      goto('/livres');
+      goto('/books');
     } catch (err) {
       error = err instanceof Error ? err.message : 'Une erreur est survenue';
     } finally {
