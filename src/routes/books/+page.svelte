@@ -196,11 +196,16 @@
       </div>
       
       <div class="filter-group">
-        <Select bind:value={isCompleted} size="small" label="Statut">
-          <option value={undefined}>Tous</option>
-          <option value={true}>Terminé</option>
-          <option value={false}>En cours</option>
-        </Select>
+        <Select 
+          bind:value={isCompleted} 
+          size="small" 
+          label="Statut"
+          options={[
+            { value: undefined, label: 'Tous' },
+            { value: true, label: 'Terminé' },
+            { value: false, label: 'En cours' }
+          ]}
+        />
       </div>
     </div>
   </div>
@@ -253,7 +258,7 @@
                 {#if book.note}
                   <span class="meta-item">
                     <span class="rating-star">★</span>
-                    {book.note.toFixed(1)}/5
+                    {book.note.toFixed(1)}/10
                   </span>
                 {/if}
               </div>
