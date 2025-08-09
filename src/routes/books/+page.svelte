@@ -5,6 +5,7 @@
   import { bookService, type Book, type BookFilter } from '../../lib/services/bookService';
   import Input from '$lib/components/Input.svelte';
   import Button from '$lib/components/Button.svelte';
+  import Select from '$lib/components/Select.svelte';
 
   let books: Book[] = [];
   let loading = true;
@@ -41,13 +42,17 @@
       error = '';
 
       const response = await bookService.getBooksWithFilters(filter, currentPage, pageSize);
+      console.log('Books response:', response);
       books = response.content;
       totalPages = response.totalPages;
       totalElements = response.totalElements;
+      console.log('Books loaded:', books.length);
     } catch (err) {
+      console.error('Error loading books:', err);
       error = err instanceof Error ? err.message : 'Erreur lors du chargement des livres';
     } finally {
       loading = false;
+      console.log('Loading finished, books count:', books.length);
     }
   }
 
@@ -96,155 +101,541 @@
   <title>Administration - Livres</title>
 </svelte:head>
 
-<div class="page-container">
-  <div class="page-header">
-    <h1 class="page-title">Gestion des Livres</h1>
-    <p class="page-subtitle">Gérez le catalogue de livres de la bibliothèque</p>
-  </div>
-
-  <div class="page-content">
-    <div class="filters-section">
-      <h3>Filtres</h3>
-      <div class="filters-grid">
-        <Input
-          label="Recherche"
-          bind:value={searchTerm}
-          placeholder="Rechercher un livre..."
-        />
-        
-        <Input
-          label="Auteur"
-          bind:value={author}
-          placeholder="Nom de l'auteur"
-        />
-        
-        <Input
-          label="Date de début"
-          type="date"
-          bind:value={dateFrom}
-        />
-        
-        <Input
-          label="Date de fin"
-          type="date"
-          bind:value={dateTo}
-        />
-        
-        <Input
-          label="Volumes min"
-          type="number"
-          bind:value={minVolumes}
-          placeholder="0"
-        />
-        
-        <Input
-          label="Volumes max"
-          type="number"
-          bind:value={maxVolumes}
-          placeholder="100"
-        />
-        
-        <Input
-          label="Note min"
-          type="number"
-          bind:value={minRating}
-          placeholder="0"
-        />
-        
-        <Input
-          label="Note max"
-          type="number"
-          bind:value={maxRating}
-          placeholder="5"
-        />
-      </div>
-      
+<div class="admin-page">
+  <div class="filters-section">
+    <div class="filters-header">
+      <h3>Filtres de recherche</h3>
       <div class="filters-actions">
-        <Button on:click={applyFilters}>
-          Appliquer les filtres
+        <Button on:click={applyFilters} variant="primary" size="small">
+          Appliquer
         </Button>
-        <Button variant="secondary" on:click={clearFilters}>
-          Effacer les filtres
+        <Button on:click={clearFilters} variant="secondary" size="small">
+          Réinitialiser
         </Button>
       </div>
     </div>
+    
+    <div class="filters-grid">
+      <div class="filter-group">
+        <Input
+          bind:value={searchTerm}
+          placeholder="Titre, auteur, description..."
+          size="small"
+          label="Recherche générale"
+        />
+      </div>
+      
+      <div class="filter-group">
+        <Input
+          bind:value={author}
+          placeholder="Nom de l'auteur"
+          size="small"
+          label="Auteur"
+        />
+      </div>
+      
+      <div class="filter-group range-group">
+        <div class="range-inputs">
+          <Input
+            type="date"
+            bind:value={dateFrom}
+            size="small"
+            label="Date de début"
+          />
+          <Input
+            type="date"
+            bind:value={dateTo}
+            size="small"
+            label="Date de fin"
+          />
+        </div>
+      </div>
+      
+      <div class="filter-group range-group volume-filters">
+        <div class="range-inputs">
+          <Input
+            type="number"
+            bind:value={minVolumes}
+            placeholder="Min"
+            size="small"
+            label="Nombre de volumes (min)"
+          />
+          <Input
+            type="number"
+            bind:value={maxVolumes}
+            placeholder="Max"
+            size="small"
+            label="Nombre de volumes (max)"
+          />
+        </div>
+      </div>
+      
+      <div class="filter-group range-group note-filters">
+        <div class="range-inputs">
+          <Input
+            type="number"
+            bind:value={minRating}
+            placeholder="Min"
+            min="0"
+            max="5"
+            step="0.1"
+            size="small"
+            label="Note (min)"
+          />
+          <Input
+            type="number"
+            bind:value={maxRating}
+            placeholder="Max"
+            min="0"
+            max="5"
+            step="0.1"
+            size="small"
+            label="Note (max)"
+          />
+        </div>
+      </div>
+      
+      <div class="filter-group">
+        <Select bind:value={isCompleted} size="small" label="Statut">
+          <option value={undefined}>Tous</option>
+          <option value={true}>Terminé</option>
+          <option value={false}>En cours</option>
+        </Select>
+      </div>
+    </div>
+  </div>
 
-    {#if error}
-      <div class="error-message">{error}</div>
-    {/if}
+  {#if error}
+    <div class="error-banner">
+      <span class="error-text">{error}</span>
+    </div>
+  {/if}
 
+  <div class="content-section">
     {#if loading}
-      <div class="loading-section">
-        <div class="spinner"></div>
+      <div class="loading-state">
+        <div class="loading-spinner"></div>
         <p>Chargement des livres...</p>
       </div>
     {:else if books.length === 0}
-      <div class="empty-section">
+      <div class="empty-state">
         <h3>Aucun livre trouvé</h3>
         <p>Aucun livre ne correspond aux critères de recherche.</p>
       </div>
     {:else}
-      <div class="books-section">
-        <div class="books-header">
-          <h3>Livres ({totalElements} résultat{totalElements > 1 ? 's' : ''})</h3>
-        </div>
-        
-        <div class="books-grid">
-          {#each books as book}
-            <div class="book-card">
+      <div class="books-grid">
+        {#each books as book}
+          <div class="book-card">
+            <div class="book-image-container">
               {#if book.imgUrl}
                 <img src={book.imgUrl} alt={book.names[0]} class="book-image" />
               {:else}
                 <div class="book-image-placeholder">
-                  <span>📚</span>
+                  <span>📖</span>
                 </div>
               {/if}
+            </div>
+            
+            <div class="book-content">
+              <h4 class="book-title">{book.names[0]}</h4>
               
-              <div class="book-info">
-                <h4 class="book-title">{book.names[0]}</h4>
-                {#if book.authors.length > 0}
-                  <p class="book-author">Par {book.authors.map(a => a.name).join(', ')}</p>
-                {/if}
-                <p class="book-volumes">{book.nbVolume} volume{book.nbVolume > 1 ? 's' : ''}</p>
+              {#if book.authors.length > 0}
+                <p class="book-author">
+                  {book.authors.map(a => a.name).join(', ')}
+                </p>
+              {/if}
+              
+              <div class="book-meta">
+                <span class="meta-item">
+                  {book.nbVolume} volume{book.nbVolume > 1 ? 's' : ''}
+                </span>
+                
                 {#if book.note}
-                  <p class="book-rating">Note: {book.note}/5</p>
-                {/if}
-                {#if book.tags.length > 0}
-                  <div class="book-tags">
-                    {#each book.tags.slice(0, 3) as tag}
-                      <span class="tag">{tag.name}</span>
-                    {/each}
-                  </div>
+                  <span class="meta-item">
+                    <span class="rating-star">★</span>
+                    {book.note.toFixed(1)}/5
+                  </span>
                 {/if}
               </div>
+              
+              {#if book.tags.length > 0}
+                <div class="book-tags">
+                  {#each book.tags.slice(0, 3) as tag}
+                    <span class="tag">{tag.name}</span>
+                  {/each}
+                  {#if book.tags.length > 3}
+                    <span class="tag-more">+{book.tags.length - 3}</span>
+                  {/if}
+                </div>
+              {/if}
             </div>
-          {/each}
-        </div>
-
-        {#if totalPages > 1}
-          <div class="pagination">
-            <Button 
-              variant="secondary" 
-              disabled={currentPage === 0}
-              on:click={() => goToPage(currentPage - 1)}
-            >
-              Précédent
-            </Button>
-            
-            <span class="page-info">
-              Page {currentPage + 1} sur {totalPages}
-            </span>
-            
-            <Button 
-              variant="secondary" 
-              disabled={currentPage === totalPages - 1}
-              on:click={() => goToPage(currentPage + 1)}
-            >
-              Suivant
-            </Button>
           </div>
-        {/if}
+        {/each}
       </div>
+
+      {#if totalPages > 1}
+        <div class="pagination">
+          <Button 
+            variant="secondary" 
+            size="small"
+            disabled={currentPage === 0}
+            on:click={() => goToPage(currentPage - 1)}
+          >
+            ← Précédent
+          </Button>
+          
+          <div class="page-info">
+            Page {currentPage + 1} sur {totalPages}
+          </div>
+          
+          <Button 
+            variant="secondary" 
+            size="small"
+            disabled={currentPage >= totalPages - 1}
+            on:click={() => goToPage(currentPage + 1)}
+          >
+            Suivant →
+          </Button>
+        </div>
+      {/if}
     {/if}
   </div>
 </div>
+
+<style>
+  .admin-page {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .filters-section {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .filters-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .filters-header h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+
+  .filters-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .filter-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .range-group .range-inputs {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+
+
+  .volume-filters {
+    grid-column: span 2;
+  }
+
+  .note-filters {
+    grid-column: span 2;
+  }
+
+  @media (max-width: 1200px) {
+    .volume-filters {
+      grid-column: span 1;
+    }
+    .note-filters {
+      grid-column: span 1;
+    }
+  }
+
+  .error-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(255, 59, 48, 0.1);
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    border-radius: var(--border-radius-md);
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .error-text {
+    color: #FF3B30;
+    font-weight: 500;
+  }
+
+  .content-section {
+    min-height: 400px;
+  }
+
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top: 3px solid var(--color-accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+
+  .empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-accent);
+  }
+
+  .empty-state p {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .book-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-normal);
+    backdrop-filter: blur(10px);
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .book-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(255, 232, 21, 0.3);
+  }
+
+  .book-image-container {
+    height: 320px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .book-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform var(--transition-normal);
+  }
+
+  .book-card:hover .book-image {
+    transform: scale(1.05);
+  }
+
+  .book-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .book-content {
+    padding: 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .book-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+    color: var(--color-white);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .book-author {
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .book-meta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .rating-star {
+    color: var(--color-accent);
+    font-size: 0.9rem;
+  }
+
+  .book-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: auto;
+  }
+
+  .tag {
+    background: rgba(255, 232, 21, 0.1);
+    color: var(--color-accent);
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid rgba(255, 232, 21, 0.2);
+  }
+
+  .tag-more {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .page-info {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    min-width: 120px;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .admin-page {
+      padding: 1rem;
+    }
+
+    .filters-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .range-group .range-inputs {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+
+
+    .books-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .book-card {
+      min-height: 420px;
+    }
+
+    .book-image-container {
+      height: 240px;
+    }
+
+    .pagination {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .filters-header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .filters-actions {
+      width: 100%;
+      justify-content: stretch;
+    }
+
+
+  }
+</style>
