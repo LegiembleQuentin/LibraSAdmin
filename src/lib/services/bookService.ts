@@ -16,16 +16,15 @@ export interface BookFilter {
 export interface Book {
   id: number;
   synopsis?: string;
-  names: string[];
+  name: string;
   dateStart: string;
   dateEnd?: string;
   nbVolume: number;
   note?: number;
+  nbVisit?: number;
   imgUrl?: string;
   tags: Tag[];
   authors: Author[];
-  relatedBooks: Book[];
-  sameAuthorBooks: Book[];
   createdAt?: string;
   modifiedAt?: string;
   userStatus?: string;

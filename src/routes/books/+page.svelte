@@ -236,7 +236,7 @@
           >
             <div class="book-image-container">
               {#if book.imgUrl}
-                <img src={book.imgUrl} alt={book.names[0]} class="book-image" />
+                <img src={book.imgUrl} alt={book.name} class="book-image" />
               {:else}
                 <div class="book-image-placeholder">
                   <span>📖</span>
@@ -245,7 +245,7 @@
             </div>
             
             <div class="book-content">
-              <h4 class="book-title">{book.names[0]}</h4>
+              <h4 class="book-title">{book.name}</h4>
               
               {#if book.authors.length > 0}
                 <p class="book-author">

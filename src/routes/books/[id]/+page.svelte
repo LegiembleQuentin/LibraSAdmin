@@ -40,7 +40,7 @@
 </script>
 
 <svelte:head>
-  <title>{book ? `${book.names[0]} - Détails` : 'Chargement...'}</title>
+  <title>{book ? `${book.name} - Détails` : 'Chargement...'}</title>
 </svelte:head>
 
 <div class="admin-page">
@@ -68,7 +68,7 @@
       <div class="book-header">
         <div class="book-image-container">
           {#if book.imgUrl}
-            <img src={book.imgUrl} alt={book.names[0]} class="book-image" />
+            <img src={book.imgUrl} alt={book.name} class="book-image" />
           {:else}
             <div class="book-placeholder">
               <span>📚</span>
@@ -77,7 +77,7 @@
         </div>
         
         <div class="book-info">
-          <h2 class="book-title">{book.names[0]}</h2>
+          <h2 class="book-title">{book.name}</h2>
           <p class="book-author">par {book.authors.map(a => a.name).join(', ')}</p>
           
           <div class="book-meta">
@@ -91,6 +91,13 @@
             <div class="meta-item">
               <span class="meta-label">Volumes</span>
               <span class="meta-value">{book.nbVolume}</span>
+            </div>
+            
+            <div class="meta-item">
+              <span class="meta-label">Visites</span>
+              <span class="meta-value visits">
+                {book.nbVisit || 0}
+              </span>
             </div>
             
             <div class="meta-item">
@@ -312,6 +319,10 @@
 
   .rating {
     color: var(--color-accent);
+  }
+
+  .visits {
+    color: rgba(255, 255, 255, 0.9);
   }
 
   .status {
