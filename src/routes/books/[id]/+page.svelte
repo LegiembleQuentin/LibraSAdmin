@@ -121,7 +121,13 @@ import BookStats from '$lib/components/BookStats.svelte';
             usersCompleted: book.usersCompleted || 0,
             usersNotStarted: book.usersNotStarted || 0,
             averageProgress: book.averageProgress || 0,
-            completionRate: book.completionRate || 0
+            completionRate: book.completionRate || 0,
+            activeUsersLast7Days: book.activeUsersLast7Days || 0,
+            activeUsersLast30Days: book.activeUsersLast30Days || 0,
+            engagementTrend: book.engagementTrend || 0,
+            activeUsersThisMonth: book.activeUsersThisMonth || 0,
+            activeUsersLastMonth: book.activeUsersLastMonth || 0,
+            newReadersThisMonth: book.newReadersThisMonth || 0
           }} />
         </div>
 

@@ -38,6 +38,12 @@ export interface Book {
   usersNotStarted?: number;
   averageProgress?: number;
   completionRate?: number;
+  activeUsersLast7Days?: number;
+  activeUsersLast30Days?: number;
+  engagementTrend?: number;
+  activeUsersThisMonth?: number;
+  activeUsersLastMonth?: number;
+  newReadersThisMonth?: number;
 }
 
 export interface Tag {
