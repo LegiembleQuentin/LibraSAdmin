@@ -80,6 +80,19 @@ class BookService {
     const response = await this.getBooksWithFilters({}, 0, 1000);
     return response.content;
   }
+
+  async getBookById(id: string): Promise<Book> {
+    const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.ADMIN_BOOKS)}/${id}`, {
+      method: 'GET',
+      headers: this.getAuthHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération du livre');
+    }
+
+    return response.json();
+  }
 }
 
 export const bookService = new BookService();

@@ -222,7 +222,18 @@
     {:else}
       <div class="books-grid">
         {#each books as book}
-          <div class="book-card">
+          <div 
+            class="book-card" 
+            on:click={() => goto(`/books/${book.id}`)} 
+            on:keydown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                goto(`/books/${book.id}`);
+              }
+            }}
+            role="button" 
+            tabindex="0"
+          >
             <div class="book-image-container">
               {#if book.imgUrl}
                 <img src={book.imgUrl} alt={book.names[0]} class="book-image" />
@@ -468,6 +479,19 @@
     min-height: 480px;
     display: flex;
     flex-direction: column;
+    cursor: pointer;
+  }
+
+  .book-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .book-card:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(255, 232, 21, 0.1);
   }
 
   .book-card:hover {
