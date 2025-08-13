@@ -31,6 +31,13 @@ export interface Book {
   userRating?: number;
   userCurrentVolume?: number;
   userMatch?: number;
+  totalUsers?: number;
+  averageVolume?: number;
+  usersInProgress?: number;
+  usersCompleted?: number;
+  usersNotStarted?: number;
+  averageProgress?: number;
+  completionRate?: number;
 }
 
 export interface Tag {

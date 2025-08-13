@@ -4,7 +4,8 @@
   import { page } from '$app/stores';
   import { authService } from '../../../lib/services/authService';
   import { bookService, type Book } from '../../../lib/services/bookService';
-  import Button from '$lib/components/Button.svelte';
+import Button from '$lib/components/Button.svelte';
+import BookStats from '$lib/components/BookStats.svelte';
 
   export let data: { id: string };
 
@@ -111,6 +112,19 @@
       </div>
 
       <div class="book-content">
+        <div class="content-section">
+          <h3>Statistiques</h3>
+          <BookStats stats={{
+            totalUsers: book.totalUsers || 0,
+            averageVolume: book.averageVolume || 0,
+            usersInProgress: book.usersInProgress || 0,
+            usersCompleted: book.usersCompleted || 0,
+            usersNotStarted: book.usersNotStarted || 0,
+            averageProgress: book.averageProgress || 0,
+            completionRate: book.completionRate || 0
+          }} />
+        </div>
+
         <div class="content-section">
           <h3>Synopsis</h3>
           <p class="book-description">
