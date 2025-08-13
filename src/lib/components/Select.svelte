@@ -4,7 +4,7 @@
   
   export let value: any = '';
   export let label: string = '';
-  export let required: boolean = false;
+
   export let disabled: boolean = false;
   export let error: string = '';
   export let size: 'small' | 'medium' | 'large' = 'medium';
@@ -15,6 +15,7 @@
   let isOpen = false;
   let selectedText = '';
   let selectElement: HTMLElement;
+  let selectId = `select-${Math.random().toString(36).substr(2, 9)}`;
   
   $: if (value && options.length > 0) {
     const option = options.find(opt => opt.value === value);
@@ -50,13 +51,14 @@
 
 <div class="form-group">
   {#if label}
-    <label class="form-label">
+    <label class="form-label" for={selectId}>
       {label}
     </label>
   {/if}
   
   <div class="select-wrapper" bind:this={selectElement}>
     <div 
+      id={selectId}
       class="select"
       class:error={error}
       class:size-small={size === 'small'}

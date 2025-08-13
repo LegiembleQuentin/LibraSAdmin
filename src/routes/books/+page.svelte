@@ -345,19 +345,9 @@
     gap: 0.5rem;
   }
 
-  .filter-group label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
 
-  .range-group .range-inputs {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
+
+
 
   .volume-filters,
   .note-filters,
@@ -371,11 +361,7 @@
     margin-right: 2rem;
   }
 
-  .volume-filters .input-wrapper,
-  .note-filters .input-wrapper,
-  .date-filters .input-wrapper {
-    flex: 1;
-  }
+
 
   @media (max-width: 1200px) {
     .filters-grid {
@@ -619,10 +605,7 @@
       gap: 1rem;
     }
 
-    .range-group .range-inputs {
-      flex-direction: column;
-      gap: 0.25rem;
-    }
+
 
 
 
