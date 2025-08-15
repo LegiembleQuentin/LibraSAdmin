@@ -50,7 +50,7 @@ import BookStats from '$lib/components/BookStats.svelte';
       <Button on:click={goBack} variant="secondary" size="small">
         ← Retour
       </Button>
-      <h1>Détails du Livre</h1>
+      <h1>Détails</h1>
     </div>
   </div>
 
@@ -111,68 +111,68 @@ import BookStats from '$lib/components/BookStats.svelte';
         </div>
       </div>
 
-      <div class="book-content">
-        <div class="content-section">
-          <h3>Statistiques</h3>
-          <BookStats stats={{
-            totalUsers: book.totalUsers || 0,
-            averageVolume: book.averageVolume || 0,
-            usersInProgress: book.usersInProgress || 0,
-            usersCompleted: book.usersCompleted || 0,
-            usersNotStarted: book.usersNotStarted || 0,
-            averageProgress: book.averageProgress || 0,
-            completionRate: book.completionRate || 0,
-            activeUsersLast7Days: book.activeUsersLast7Days || 0,
-            activeUsersLast30Days: book.activeUsersLast30Days || 0,
-            engagementTrend: book.engagementTrend || 0,
-            activeUsersThisMonth: book.activeUsersThisMonth || 0,
-            activeUsersLastMonth: book.activeUsersLastMonth || 0,
-            newReadersThisMonth: book.newReadersThisMonth || 0
-          }} />
-        </div>
+                    <div class="book-content">
+                <div class="content-section">
+                  <h3>Synopsis</h3>
+                  <p class="book-description">
+                    {book.synopsis || 'Aucun synopsis disponible.'}
+                  </p>
+                </div>
 
-        <div class="content-section">
-          <h3>Synopsis</h3>
-          <p class="book-description">
-            {book.synopsis || 'Aucun synopsis disponible.'}
-          </p>
-        </div>
+                {#if book.tags && book.tags.length > 0}
+                  <div class="content-section">
+                    <h3>Tags</h3>
+                    <div class="book-tags">
+                      {#each book.tags as tag}
+                        <span class="tag">{tag.name}</span>
+                      {/each}
+                    </div>
+                  </div>
+                {/if}
 
-        {#if book.tags && book.tags.length > 0}
-          <div class="content-section">
-            <h3>Tags</h3>
-            <div class="book-tags">
-              {#each book.tags as tag}
-                <span class="tag">{tag.name}</span>
-              {/each}
-            </div>
-          </div>
-        {/if}
+                <div class="content-section">
+                  <h3>Informations</h3>
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <span class="info-label">Date de début</span>
+                      <span class="info-value">
+                        {book.dateStart ? new Date(book.dateStart).toLocaleDateString('fr-FR') : 'Non définie'}
+                      </span>
+                    </div>
+                    
+                    <div class="info-item">
+                      <span class="info-label">Date de fin</span>
+                      <span class="info-value">
+                        {book.dateEnd ? new Date(book.dateEnd).toLocaleDateString('fr-FR') : 'Non définie'}
+                      </span>
+                    </div>
+                    
+                    <div class="info-item">
+                      <span class="info-label">ID</span>
+                      <span class="info-value id-value">{book.id}</span>
+                    </div>
+                  </div>
+                </div>
 
-        <div class="content-section">
-          <h3>Informations</h3>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="info-label">Date de début</span>
-              <span class="info-value">
-                {book.dateStart ? new Date(book.dateStart).toLocaleDateString('fr-FR') : 'Non définie'}
-              </span>
-            </div>
-            
-            <div class="info-item">
-              <span class="info-label">Date de fin</span>
-              <span class="info-value">
-                {book.dateEnd ? new Date(book.dateEnd).toLocaleDateString('fr-FR') : 'Non définie'}
-              </span>
-            </div>
-            
-            <div class="info-item">
-              <span class="info-label">ID</span>
-              <span class="info-value id-value">{book.id}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+                <div class="content-section">
+                  <h3>Statistiques</h3>
+                  <BookStats stats={{
+                    totalUsers: book.totalUsers || 0,
+                    averageVolume: book.averageVolume || 0,
+                    usersInProgress: book.usersInProgress || 0,
+                    usersCompleted: book.usersCompleted || 0,
+                    usersNotStarted: book.usersNotStarted || 0,
+                    averageProgress: book.averageProgress || 0,
+                    completionRate: book.completionRate || 0,
+                    activeUsersLast7Days: book.activeUsersLast7Days || 0,
+                    activeUsersLast30Days: book.activeUsersLast30Days || 0,
+                    engagementTrend: book.engagementTrend || 0,
+                    activeUsersThisMonth: book.activeUsersThisMonth || 0,
+                    activeUsersLastMonth: book.activeUsersLastMonth || 0,
+                    newReadersThisMonth: book.newReadersThisMonth || 0
+                  }} />
+                </div>
+              </div>
     </div>
   {:else}
     <div class="error-banner">
