@@ -119,13 +119,37 @@
     margin-top: 0.25rem;
   }
 
-  .input[type="number"]::-webkit-outer-spin-button,
+    .input[type="number"]::-webkit-outer-spin-button,
   .input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
-
+  
   .input[type="number"] {
     -moz-appearance: textfield;
+  }
+
+  /* Styles pour les inputs de type date */
+  .input[type="date"]::-webkit-calendar-picker-indicator {
+    background-color: transparent;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3e%3cpath fill='%23ffffff' d='M15 2V1a1 1 0 0 0-2 0v1H7V1a1 1 0 0 0-2 0v1H3a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2zM3 6h14v10H3V6z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px;
+    width: 20px;
+    height: 20px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity var(--transition-fast);
+  }
+  
+  .input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+  }
+
+  /* Pour Firefox */
+  .input[type="date"] {
+    position: relative;
   }
 </style>
