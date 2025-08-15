@@ -7,6 +7,7 @@
 import Button from '$lib/components/Button.svelte';
 import BookStats from '$lib/components/BookStats.svelte';
 import BookEditModal from '$lib/components/BookEditModal.svelte';
+import ConfirmModal from '$lib/components/ConfirmModal.svelte';
 
   export let data: { id: string };
 
@@ -14,6 +15,8 @@ import BookEditModal from '$lib/components/BookEditModal.svelte';
   let loading = true;
   let error = '';
   let showEditModal = false;
+  let showDeleteModal = false;
+  let isDeleting = false;
   let availableAuthors: Author[] = [];
   let availableTags: Tag[] = [];
 
@@ -102,6 +105,29 @@ import BookEditModal from '$lib/components/BookEditModal.svelte';
       error = err instanceof Error ? err.message : 'Erreur lors de la sauvegarde';
     }
   }
+
+  function openDeleteModal() {
+    showDeleteModal = true;
+  }
+
+  function closeDeleteModal() {
+    showDeleteModal = false;
+  }
+
+  async function handleDeleteConfirm() {
+    if (!book) return;
+    
+    isDeleting = true;
+    try {
+      await bookService.deleteBook(book.id);
+      goto('/books');
+    } catch (err) {
+      console.error('Erreur lors de la suppression:', err);
+      error = err instanceof Error ? err.message : 'Erreur lors de la suppression';
+      isDeleting = false;
+      closeDeleteModal();
+    }
+  }
 </script>
 
 <svelte:head>
@@ -119,9 +145,14 @@ import BookEditModal from '$lib/components/BookEditModal.svelte';
       </div>
       
       {#if book}
-        <Button on:click={openEditModal} variant="primary" size="medium">
-          Modifier
-        </Button>
+        <div class="header-actions">
+          <Button on:click={openEditModal} variant="primary" size="medium">
+            Modifier
+          </Button>
+          <Button on:click={openDeleteModal} variant="secondary" size="medium" class="btn-delete">
+            Supprimer
+          </Button>
+        </div>
       {/if}
     </div>
   </div>
@@ -267,6 +298,18 @@ import BookEditModal from '$lib/components/BookEditModal.svelte';
   />
 {/if}
 
+<ConfirmModal
+  isOpen={showDeleteModal}
+  title="Supprimer le livre"
+  message={book ? `Êtes-vous sûr de vouloir supprimer "${book.name}" ? Cette action est irréversible.` : 'Êtes-vous sûr de vouloir supprimer ce livre ?'}
+  confirmText="Supprimer"
+  cancelText="Annuler"
+  variant="danger"
+  isLoading={isDeleting}
+  on:confirm={handleDeleteConfirm}
+  on:cancel={closeDeleteModal}
+/>
+
 <style>
   .admin-page {
     min-height: 100vh;
@@ -290,6 +333,22 @@ import BookEditModal from '$lib/components/BookEditModal.svelte';
     display: flex;
     align-items: center;
     gap: 1rem;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  :global(.btn-delete) {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+    border-color: #dc2626 !important;
+    color: white !important;
+  }
+
+  :global(.btn-delete:hover:not(:disabled)) {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%) !important;
+    border-color: #b91c1c !important;
   }
 
   .header-content h1 {

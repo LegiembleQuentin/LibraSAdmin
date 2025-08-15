@@ -134,6 +134,17 @@ class BookService {
 
     return response.json();
   }
+
+  async deleteBook(id: number): Promise<void> {
+    const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.ADMIN_BOOKS)}/${id}`, {
+      method: 'DELETE',
+      headers: this.getAuthHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la suppression du livre');
+    }
+  }
 }
 
 export const bookService = new BookService();
