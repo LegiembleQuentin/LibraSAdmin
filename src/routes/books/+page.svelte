@@ -2,10 +2,11 @@
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { authService } from '../../lib/services/authService';
-  import { bookService, type Book, type BookFilter } from '../../lib/services/bookService';
+  import { bookService, type Book, type BookFilter, type Author, type Tag } from '../../lib/services/bookService';
   import Input from '$lib/components/Input.svelte';
   import Button from '$lib/components/Button.svelte';
   import Select from '$lib/components/Select.svelte';
+  import BookEditModal from '$lib/components/BookEditModal.svelte';
 
   let books: Book[] = [];
   let loading = true;
@@ -27,13 +28,28 @@
   let minRating = '';
   let maxRating = '';
 
+  // Variables pour la modale de création
+  let showCreateModal = false;
+  let availableAuthors: Author[] = [];
+  let availableTags: Tag[] = [];
+  let emptyBook: Book = {
+    id: 0,
+    name: '',
+    synopsis: '',
+    nbVolume: 1,
+    dateStart: new Date().toISOString().split('T')[0],
+    dateEnd: '',
+    authors: [],
+    tags: []
+  };
+
   onMount(async () => {
     const isAuthenticated = await authService.verifyAuth();
     if (!isAuthenticated) {
       goto('/');
       return;
     }
-    await loadBooks();
+    await Promise.all([loadBooks(), loadAuthorsAndTags()]);
   });
 
   async function loadBooks() {
@@ -95,6 +111,60 @@
       loadBooks();
     }
   }
+
+  async function loadAuthorsAndTags() {
+    try {
+      const books = await bookService.getAllBooks();
+      const authorsMap = new Map<number, Author>();
+      const tagsMap = new Map<number, Tag>();
+      
+      if (books && Array.isArray(books)) {
+        books.forEach(book => {
+          if (book.authors && Array.isArray(book.authors)) {
+            book.authors.forEach(author => {
+              if (author.id && author.name) {
+                authorsMap.set(author.id, author);
+              }
+            });
+          }
+          if (book.tags && Array.isArray(book.tags)) {
+            book.tags.forEach(tag => {
+              if (tag.id && tag.name) {
+                tagsMap.set(tag.id, tag);
+              }
+            });
+          }
+        });
+      }
+      
+      availableAuthors = Array.from(authorsMap.values());
+      availableTags = Array.from(tagsMap.values());
+    } catch (err) {
+      console.error('Error loading authors and tags:', err);
+      availableAuthors = [];
+      availableTags = [];
+    }
+  }
+
+  function openCreateModal() {
+    showCreateModal = true;
+  }
+
+  function closeCreateModal() {
+    showCreateModal = false;
+  }
+
+  async function handleBookCreate(event: CustomEvent<Book>) {
+    const newBook = event.detail;
+    try {
+      await bookService.createBook(newBook);
+      closeCreateModal();
+      await loadBooks();
+    } catch (err) {
+      console.error('Erreur lors de la création:', err);
+      error = err instanceof Error ? err.message : 'Erreur lors de la création';
+    }
+  }
 </script>
 
 <svelte:head>
@@ -106,7 +176,10 @@
     <div class="filters-header">
       <h3>Filtres de recherche</h3>
       <div class="filters-actions">
-        <Button on:click={applyFilters} variant="primary" size="small">
+        <Button on:click={openCreateModal} variant="primary" size="medium">
+          + Créer un livre
+        </Button>
+        <Button on:click={applyFilters} variant="secondary" size="small">
           Appliquer
         </Button>
         <Button on:click={clearFilters} variant="secondary" size="small">
@@ -309,6 +382,15 @@
     {/if}
   </div>
 </div>
+
+<BookEditModal 
+  isOpen={showCreateModal} 
+  book={emptyBook}
+  {availableAuthors}
+  {availableTags}
+  on:close={closeCreateModal}
+  on:save={handleBookCreate}
+/>
 
 <style>
   .admin-page {

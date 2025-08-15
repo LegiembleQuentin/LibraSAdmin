@@ -5,7 +5,8 @@ export const API_CONFIG = {
   ENDPOINTS: {
     ADMIN_LOGIN: '/api/admin/login',
     ADMIN_VERIFY: '/api/admin/verify',
-    ADMIN_BOOKS: '/api/admin/books'
+    ADMIN_BOOKS: '/api/admin/books',
+    ADMIN_BOOKS_SEARCH: '/api/admin/books/search'
   }
 };
 

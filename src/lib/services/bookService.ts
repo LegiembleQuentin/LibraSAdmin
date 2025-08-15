@@ -75,7 +75,7 @@ class BookService {
   }
 
   async getBooksWithFilters(filter: BookFilter = {}, page: number = 0, size: number = 20): Promise<BookResponse> {
-    const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.ADMIN_BOOKS)}?page=${page}&size=${size}`, {
+    const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.ADMIN_BOOKS_SEARCH)}?page=${page}&size=${size}`, {
       method: 'POST',
       headers: this.getAuthHeaders(),
       body: JSON.stringify(filter)
@@ -115,6 +115,20 @@ class BookService {
 
     if (!response.ok) {
       throw new Error('Erreur lors de la mise à jour du livre');
+    }
+
+    return response.json();
+  }
+
+  async createBook(book: Partial<Book>): Promise<Book> {
+    const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.ADMIN_BOOKS)}`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(book)
+    });
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la création du livre');
     }
 
     return response.json();

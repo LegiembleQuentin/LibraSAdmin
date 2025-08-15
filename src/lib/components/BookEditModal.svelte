@@ -27,12 +27,16 @@
   let errors: Record<string, string> = {};
   let isLoading = false;
   
+  // Détection du mode création/édition
+  $: isCreateMode = !book || !book.id || book.id === 0;
+  $: modalTitle = isCreateMode ? 'Créer un livre' : 'Modifier le livre';
+  
   $: if (book && isOpen) {
     formData = {
       name: book.name || '',
       synopsis: book.synopsis || '',
-      nbVolume: book.nbVolume || 0,
-      dateStart: book.dateStart ? book.dateStart.split('T')[0] : '',
+      nbVolume: book.nbVolume || 1,
+      dateStart: book.dateStart ? book.dateStart.split('T')[0] : new Date().toISOString().split('T')[0],
       dateEnd: book.dateEnd ? book.dateEnd.split('T')[0] : '',
       authorIds: book.authors?.map(a => a.id) || [],
       tagIds: book.tags?.map(t => t.id) || []
@@ -85,8 +89,8 @@
     isLoading = true;
     
     try {
-      const updatedBook = {
-        ...book,
+      const bookData = {
+        ...(isCreateMode ? {} : book),
         name: formData.name,
         synopsis: formData.synopsis,
         nbVolume: formData.nbVolume,
@@ -96,7 +100,7 @@
         tags: availableTags.filter(t => formData.tagIds.includes(t.id))
       };
       
-      dispatch('save', updatedBook);
+      dispatch('save', bookData);
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
     } finally {
@@ -121,7 +125,7 @@
   }
 </script>
 
-<Modal {isOpen} title="Modifier le livre" size="large" on:close={handleClose}>
+<Modal {isOpen} title={modalTitle} size="large" on:close={handleClose}>
   <form on:submit|preventDefault={handleSave} class="edit-form">
     <div class="form-grid">
       <div class="form-group full-width">
@@ -220,7 +224,7 @@
       disabled={isLoading}
       loading={isLoading}
     >
-      {isLoading ? 'Sauvegarde...' : 'Sauvegarder'}
+{isLoading ? (isCreateMode ? 'Création...' : 'Sauvegarde...') : (isCreateMode ? 'Créer' : 'Sauvegarder')}
     </Button>
   </div>
 </Modal>
