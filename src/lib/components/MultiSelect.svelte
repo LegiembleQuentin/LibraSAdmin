@@ -48,6 +48,13 @@
       toggleDropdown();
     }
   }
+
+  function handleOptionKeydown(event: KeyboardEvent, option: { value: any; label: string }) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      selectOption(option);
+    }
+  }
   
   function handleClickOutside(event: MouseEvent) {
     if (selectElement && !selectElement.contains(event.target as Node)) {
@@ -96,8 +103,10 @@
             class="multiselect-option"
             class:selected={value.includes(option.value)}
             on:click|stopPropagation={() => selectOption(option)}
+            on:keydown={(event) => handleOptionKeydown(event, option)}
             role="option"
             aria-selected={value.includes(option.value)}
+            tabindex="0"
           >
             <div class="option-checkbox">
               {#if value.includes(option.value)}

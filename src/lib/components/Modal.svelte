@@ -22,6 +22,14 @@
       closeModal();
     }
   }
+
+  function handleBackdropKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      if (event.target === event.currentTarget) {
+        closeModal();
+      }
+    }
+  }
   
   onMount(() => {
     if (isOpen) {
@@ -43,7 +51,13 @@
 <svelte:window on:keydown={handleKeydown} />
 
 {#if isOpen}
-  <div class="modal-backdrop" on:click={handleBackdropClick}>
+  <div 
+    class="modal-backdrop" 
+    on:click={handleBackdropClick}
+    on:keydown={handleBackdropKeydown}
+    role="button"
+    tabindex="0"
+  >
     <div class="modal-container {size}">
       <div class="modal-header">
         <h2 class="modal-title">{title}</h2>
