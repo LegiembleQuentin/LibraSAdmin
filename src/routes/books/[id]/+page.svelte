@@ -175,8 +175,8 @@ import BookEditModal from '$lib/components/BookEditModal.svelte';
             
             <div class="meta-item">
               <span class="meta-label">Statut</span>
-              <span class="meta-value status" class:completed={book.userStatus === 'completed'}>
-                {book.userStatus === 'completed' ? 'Complété' : 'En cours'}
+              <span class="meta-value status" class:completed={book.isCompleted}>
+                {book.isCompleted ? 'Complété' : 'En cours'}
               </span>
             </div>
           </div>

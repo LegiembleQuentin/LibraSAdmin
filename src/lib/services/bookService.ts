@@ -44,6 +44,7 @@ export interface Book {
   activeUsersThisMonth?: number;
   activeUsersLastMonth?: number;
   newReadersThisMonth?: number;
+  isCompleted?: boolean;
 }
 
 export interface Tag {
