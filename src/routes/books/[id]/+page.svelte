@@ -3,23 +3,33 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { authService } from '../../../lib/services/authService';
-  import { bookService, type Book } from '../../../lib/services/bookService';
+  import { bookService, type Book, type Author, type Tag } from '../../../lib/services/bookService';
 import Button from '$lib/components/Button.svelte';
 import BookStats from '$lib/components/BookStats.svelte';
+import BookEditModal from '$lib/components/BookEditModal.svelte';
 
   export let data: { id: string };
 
   let book: Book | null = null;
   let loading = true;
   let error = '';
+  let showEditModal = false;
+  let availableAuthors: Author[] = [];
+  let availableTags: Tag[] = [];
 
   onMount(async () => {
-    const isAuthenticated = await authService.verifyAuth();
-    if (!isAuthenticated) {
-      goto('/');
-      return;
+    try {
+      const isAuthenticated = await authService.verifyAuth();
+      if (!isAuthenticated) {
+        goto('/');
+        return;
+      }
+      await Promise.all([loadBook(), loadAuthorsAndTags()]);
+    } catch (err) {
+      console.error('Error in onMount:', err);
+      error = 'Erreur lors de l\'initialisation de la page';
+      loading = false;
     }
-    await loadBook();
   });
 
   async function loadBook() {
@@ -35,8 +45,62 @@ import BookStats from '$lib/components/BookStats.svelte';
     }
   }
 
+  async function loadAuthorsAndTags() {
+    try {
+      const books = await bookService.getAllBooks();
+      const authorsMap = new Map<number, Author>();
+      const tagsMap = new Map<number, Tag>();
+      
+      if (books && Array.isArray(books)) {
+        books.forEach(book => {
+          if (book.authors && Array.isArray(book.authors)) {
+            book.authors.forEach(author => {
+              if (author.id && author.name) {
+                authorsMap.set(author.id, author);
+              }
+            });
+          }
+          if (book.tags && Array.isArray(book.tags)) {
+            book.tags.forEach(tag => {
+              if (tag.id && tag.name) {
+                tagsMap.set(tag.id, tag);
+              }
+            });
+          }
+        });
+      }
+      
+      availableAuthors = Array.from(authorsMap.values());
+      availableTags = Array.from(tagsMap.values());
+    } catch (err) {
+      console.error('Error loading authors and tags:', err);
+      availableAuthors = [];
+      availableTags = [];
+    }
+  }
+
   function goBack() {
     goto('/books');
+  }
+
+  function openEditModal() {
+    showEditModal = true;
+  }
+
+  function closeEditModal() {
+    showEditModal = false;
+  }
+
+  async function handleBookSave(event: CustomEvent<Book>) {
+    const updatedBook = event.detail;
+    try {
+      await bookService.updateBook(updatedBook.id, updatedBook);
+      closeEditModal();
+      await loadBook();
+    } catch (err) {
+      console.error('Erreur lors de la sauvegarde:', err);
+      error = err instanceof Error ? err.message : 'Erreur lors de la sauvegarde';
+    }
   }
 </script>
 
@@ -47,10 +111,18 @@ import BookStats from '$lib/components/BookStats.svelte';
 <div class="admin-page">
   <div class="page-header">
     <div class="header-content">
-      <Button on:click={goBack} variant="secondary" size="small">
-        ← Retour
-      </Button>
-      <h1>Détails</h1>
+      <div class="header-left">
+        <Button on:click={goBack} variant="secondary" size="small">
+          ← Retour
+        </Button>
+        <h1>Détails</h1>
+      </div>
+      
+      {#if book}
+        <Button on:click={openEditModal} variant="primary" size="medium">
+          Modifier
+        </Button>
+      {/if}
     </div>
   </div>
 
@@ -79,7 +151,7 @@ import BookStats from '$lib/components/BookStats.svelte';
         
         <div class="book-info">
           <h2 class="book-title">{book.name}</h2>
-          <p class="book-author">par {book.authors.map(a => a.name).join(', ')}</p>
+          <p class="book-author">par {book.authors?.map(a => a.name).join(', ') || 'Auteur inconnu'}</p>
           
           <div class="book-meta">
             <div class="meta-item">
@@ -133,18 +205,20 @@ import BookStats from '$lib/components/BookStats.svelte';
                 <div class="content-section">
                   <h3>Informations</h3>
                   <div class="info-grid">
-                    <div class="info-item">
-                      <span class="info-label">Date de début</span>
-                      <span class="info-value">
-                        {book.dateStart ? new Date(book.dateStart).toLocaleDateString('fr-FR') : 'Non définie'}
-                      </span>
-                    </div>
-                    
-                    <div class="info-item">
-                      <span class="info-label">Date de fin</span>
-                      <span class="info-value">
-                        {book.dateEnd ? new Date(book.dateEnd).toLocaleDateString('fr-FR') : 'Non définie'}
-                      </span>
+                    <div class="date-group">
+                      <div class="info-item">
+                        <span class="info-label">Date de début</span>
+                        <span class="info-value">
+                          {book.dateStart ? new Date(book.dateStart).toLocaleDateString('fr-FR') : 'Non définie'}
+                        </span>
+                      </div>
+                      
+                      <div class="info-item">
+                        <span class="info-label">Date de fin</span>
+                        <span class="info-value">
+                          {book.dateEnd ? new Date(book.dateEnd).toLocaleDateString('fr-FR') : 'Non définie'}
+                        </span>
+                      </div>
                     </div>
                     
                     <div class="info-item">
@@ -182,6 +256,17 @@ import BookStats from '$lib/components/BookStats.svelte';
   {/if}
 </div>
 
+{#if book}
+  <BookEditModal 
+    isOpen={showEditModal} 
+    {book}
+    {availableAuthors}
+    {availableTags}
+    on:close={closeEditModal}
+    on:save={handleBookSave}
+  />
+{/if}
+
 <style>
   .admin-page {
     min-height: 100vh;
@@ -195,6 +280,13 @@ import BookStats from '$lib/components/BookStats.svelte';
   }
 
   .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .header-left {
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -413,6 +505,16 @@ import BookStats from '$lib/components/BookStats.svelte';
     flex-direction: column;
     gap: 0.5rem;
   }
+  
+  .date-group {
+    display: flex;
+    gap: 2rem;
+    grid-column: span 2;
+  }
+  
+  .date-group .info-item {
+    flex: 1;
+  }
 
   .info-label {
     font-size: 0.9rem;
@@ -461,6 +563,12 @@ import BookStats from '$lib/components/BookStats.svelte';
 
     .info-grid {
       grid-template-columns: 1fr;
+    }
+    
+    .date-group {
+      flex-direction: column;
+      gap: 1rem;
+      grid-column: span 1;
     }
   }
 </style>

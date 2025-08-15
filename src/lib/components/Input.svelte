@@ -18,7 +18,7 @@
 
 <div class="form-group">
   {#if label}
-    <label for="{label.toLowerCase()}" class="form-label">
+    <label for="{label.toLowerCase().replace(/\s+/g, '-')}" class="form-label">
       {label}
     </label>
   {/if}
@@ -32,7 +32,7 @@
     {min}
     {max}
     {step}
-    id="{label.toLowerCase()}"
+    id="{label.toLowerCase().replace(/\s+/g, '-')}"
     class="input"
     class:error={error}
     class:size-small={size === 'small'}

@@ -105,6 +105,20 @@ class BookService {
 
     return response.json();
   }
+
+  async updateBook(id: number, book: Partial<Book>): Promise<Book> {
+    const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.ADMIN_BOOKS)}/${id}`, {
+      method: 'PUT',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(book)
+    });
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la mise à jour du livre');
+    }
+
+    return response.json();
+  }
 }
 
 export const bookService = new BookService();
