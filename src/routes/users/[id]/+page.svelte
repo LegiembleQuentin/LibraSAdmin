@@ -3,7 +3,7 @@
   import { page } from '$app/stores';
   import { goto } from '$app/navigation';
   import { authService } from '$lib/services/authService';
-  import { userService, type AppUser } from '$lib/services/userService';
+  import { userService, type AppUser, type UserBook } from '$lib/services/userService';
   import Button from '$lib/components/Button.svelte';
 
   let user: AppUser | null = null;
@@ -49,6 +49,26 @@
 
   function goBack() {
     goto('/users');
+  }
+
+  function getStatusLabel(status: string): string {
+    switch (status) {
+      case 'READING': return 'En cours';
+      case 'COMPLETED': return 'Terminé';
+      case 'TO_READ': return 'À lire';
+      case 'PAUSED': return 'En pause';
+      default: return status;
+    }
+  }
+
+  function getStatusClass(status: string): string {
+    switch (status) {
+      case 'READING': return 'reading';
+      case 'COMPLETED': return 'completed';
+      case 'TO_READ': return 'to-read';
+      case 'PAUSED': return 'paused';
+      default: return '';
+    }
   }
 </script>
 
@@ -165,6 +185,72 @@
           </div>
         </div>
       </div>
+
+      {#if user.books && user.books.length > 0}
+        <div class="user-books-section">
+          <h3 class="section-title">Livres de l'utilisateur</h3>
+          <div class="books-table-container">
+            <table class="books-table">
+              <thead>
+                <tr>
+                  <th>Titre</th>
+                  <th>Auteur(s)</th>
+                  <th>Statut</th>
+                  <th>Note utilisateur</th>
+                  <th>Progression</th>
+                  <th>Dernière activité</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each user.books as book}
+                  <tr>
+                    <td class="book-title-cell">
+                      <div class="book-info">
+                        {#if book.imageUrl}
+                          <img src={book.imageUrl} alt={book.title} class="book-thumbnail" />
+                        {:else}
+                          <div class="book-thumbnail-placeholder">📚</div>
+                        {/if}
+                        <span class="book-title">{book.title}</span>
+                      </div>
+                    </td>
+                    <td class="authors-cell">
+                      {book.authors.join(', ')}
+                    </td>
+                    <td class="status-cell">
+                      <span class="status-badge {getStatusClass(book.status)}">
+                        {getStatusLabel(book.status)}
+                      </span>
+                    </td>
+                    <td class="rating-cell">
+                      {#if book.userRating && book.userRating > 0}
+                        <span class="rating">⭐ {book.userRating.toFixed(1)}/10</span>
+                      {:else}
+                        <span class="no-rating">Non noté</span>
+                      {/if}
+                    </td>
+                    <td class="progress-cell">
+                      {#if book.currentVolume && book.totalVolumes}
+                        <div class="progress-info">
+                          <span class="progress-text">{book.currentVolume}/{book.totalVolumes}</span>
+                          <div class="progress-bar">
+                            <div class="progress-fill" style="width: {(book.currentVolume / book.totalVolumes) * 100}%"></div>
+                          </div>
+                        </div>
+                      {:else}
+                        <span class="no-progress">-</span>
+                      {/if}
+                    </td>
+                    <td class="activity-cell">
+                      {formatDate(book.modifiedAt || '')}
+                    </td>
+                  </tr>
+                {/each}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {/if}
     </div>
   {:else}
     <div class="empty-state">
@@ -347,6 +433,180 @@
     color: rgba(255, 255, 255, 0.7);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+  }
+
+  .user-books-section {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .books-table-container {
+    overflow-x: auto;
+    margin-top: 1.5rem;
+    border-radius: var(--border-radius-md);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .books-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-secondary);
+    font-size: 0.9rem;
+  }
+
+  .books-table th {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
+    font-family: var(--font-primary);
+    font-weight: 600;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+  }
+
+  .books-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
+    vertical-align: middle;
+  }
+
+  .books-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .book-title-cell {
+    min-width: 250px;
+  }
+
+  .book-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .book-thumbnail {
+    width: 40px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--border-radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .book-thumbnail-placeholder {
+    width: 40px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-sm);
+    font-size: 1.5rem;
+  }
+
+  .book-title {
+    font-weight: 500;
+    color: var(--color-white);
+  }
+
+  .authors-cell {
+    min-width: 150px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .status-cell {
+    min-width: 120px;
+  }
+
+  .status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .status-badge.reading {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+
+  .status-badge.completed {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+
+  .status-badge.to-read {
+    background: rgba(156, 163, 175, 0.2);
+    color: #9ca3af;
+    border: 1px solid rgba(156, 163, 175, 0.3);
+  }
+
+  .status-badge.paused {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  .rating-cell {
+    min-width: 100px;
+  }
+
+  .rating {
+    color: var(--color-accent);
+    font-weight: 500;
+  }
+
+  .no-rating {
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+  }
+
+  .progress-cell {
+    min-width: 120px;
+  }
+
+  .progress-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .progress-text {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .progress-bar {
+    width: 60px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--color-accent);
+    transition: width var(--transition-normal);
+  }
+
+  .no-progress {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .activity-cell {
+    font-family: var(--font-monospace, monospace);
+    font-size: 0.85rem;
+    opacity: 0.8;
+    white-space: nowrap;
+    min-width: 130px;
   }
 
   @media (max-width: 768px) {

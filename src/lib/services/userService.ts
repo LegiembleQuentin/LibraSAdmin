@@ -2,6 +2,20 @@ import { API_CONFIG, buildApiUrl } from '../config';
 import { authStore } from './authService';
 import { get } from 'svelte/store';
 
+export interface UserBook {
+  bookId: number;
+  title: string;
+  authors: string[];
+  imageUrl?: string;
+  status: string;
+  userRating?: number;
+  currentVolume?: number;
+  totalVolumes: number;
+  startedAt?: string;
+  completedAt?: string;
+  modifiedAt?: string;
+}
+
 export interface AppUser {
   id: number;
   displayName: string;
@@ -15,6 +29,7 @@ export interface AppUser {
   booksCompleted?: number;
   averageRating?: number;
   profileImageUrl?: string;
+  books?: UserBook[];
 }
 
 export interface UserFilter {
