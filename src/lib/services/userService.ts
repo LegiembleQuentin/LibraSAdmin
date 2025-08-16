@@ -54,17 +54,12 @@ class UserService {
       size: size.toString()
     });
 
-    // Ajouter les filtres s'ils sont définis
-    if (filter.search) params.append('search', filter.search);
-    if (filter.role) params.append('role', filter.role);
-    if (filter.createdAfter) params.append('createdAfter', filter.createdAfter);
-    if (filter.createdBefore) params.append('createdBefore', filter.createdBefore);
-
-    const url = `${buildApiUrl(API_CONFIG.ENDPOINTS.ADMIN_USERS)}?${params.toString()}`;
+    const url = `${buildApiUrl(API_CONFIG.ENDPOINTS.ADMIN_USERS)}/search?${params.toString()}`;
     
     const response = await fetch(url, {
-      method: 'GET',
-      headers: this.getAuthHeaders()
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify(filter)
     });
 
     if (!response.ok) {

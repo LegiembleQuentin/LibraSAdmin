@@ -59,11 +59,21 @@
   }
 
   function applyFilters() {
+    let createdAfterISO = undefined;
+    let createdBeforeISO = undefined;
+    
+    if (dateFrom) {
+      createdAfterISO = new Date(dateFrom + 'T00:00:00').toISOString();
+    }
+    if (dateTo) {
+      createdBeforeISO = new Date(dateTo + 'T23:59:59').toISOString();
+    }
+
     filter = {
       search: searchTerm || undefined,
       role: selectedRole || undefined,
-      createdAfter: dateFrom || undefined,
-      createdBefore: dateTo || undefined
+      createdAfter: createdAfterISO,
+      createdBefore: createdBeforeISO
     };
     currentPage = 0;
     loadUsers();
