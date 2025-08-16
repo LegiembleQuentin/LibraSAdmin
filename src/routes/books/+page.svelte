@@ -176,14 +176,14 @@
     <div class="filters-header">
       <h3>Filtres de recherche</h3>
       <div class="filters-actions">
-        <Button on:click={openCreateModal} variant="primary" size="medium">
-          + Créer un livre
-        </Button>
         <Button on:click={applyFilters} variant="secondary" size="small">
           Appliquer
         </Button>
         <Button on:click={clearFilters} variant="secondary" size="small">
           Réinitialiser
+        </Button>
+        <Button on:click={openCreateModal} variant="primary" size="medium">
+          + Ajouter un livre
         </Button>
       </div>
     </div>
