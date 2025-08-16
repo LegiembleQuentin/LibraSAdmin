@@ -9,7 +9,6 @@ export interface AppUser {
   createdAt: string;
   modifiedAt?: string;
   lastLoginAt?: string;
-  isActive: boolean;
   roles: string[];
   totalBooks?: number;
   booksInProgress?: number;
@@ -20,12 +19,9 @@ export interface AppUser {
 
 export interface UserFilter {
   search?: string;
-  isActive?: boolean;
   role?: string;
   createdAfter?: string;
   createdBefore?: string;
-  lastLoginAfter?: string;
-  lastLoginBefore?: string;
 }
 
 export interface UserPageResponse {
@@ -60,12 +56,9 @@ class UserService {
 
     // Ajouter les filtres s'ils sont définis
     if (filter.search) params.append('search', filter.search);
-    if (filter.isActive !== undefined) params.append('active', filter.isActive.toString());
     if (filter.role) params.append('role', filter.role);
     if (filter.createdAfter) params.append('createdAfter', filter.createdAfter);
     if (filter.createdBefore) params.append('createdBefore', filter.createdBefore);
-    if (filter.lastLoginAfter) params.append('lastLoginAfter', filter.lastLoginAfter);
-    if (filter.lastLoginBefore) params.append('lastLoginBefore', filter.lastLoginBefore);
 
     const url = `${buildApiUrl(API_CONFIG.ENDPOINTS.ADMIN_USERS)}?${params.toString()}`;
     
@@ -103,25 +96,7 @@ class UserService {
     return await response.json();
   }
 
-  async updateUserStatus(id: number, isActive: boolean): Promise<AppUser> {
-    const response = await fetch(buildApiUrl(`${API_CONFIG.ENDPOINTS.ADMIN_USERS}/${id}/status`), {
-      method: 'PATCH',
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify({ isActive })
-    });
 
-    if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error('Session expirée. Veuillez vous reconnecter.');
-      }
-      if (response.status === 404) {
-        throw new Error('Utilisateur non trouvé');
-      }
-      throw new Error('Erreur lors de la mise à jour du statut');
-    }
-
-    return await response.json();
-  }
 }
 
 export const userService = new UserService();

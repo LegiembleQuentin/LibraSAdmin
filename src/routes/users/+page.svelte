@@ -18,7 +18,6 @@
   let filter: UserFilter = {};
   let searchTerm = '';
   let selectedRole = '';
-  let selectedStatus = '';
   let dateFrom = '';
   let dateTo = '';
 
@@ -28,11 +27,7 @@
     { value: 'ADMIN', label: 'Administrateur' }
   ];
 
-  const statusOptions = [
-    { value: '', label: 'Tous les statuts' },
-    { value: 'true', label: 'Actif' },
-    { value: 'false', label: 'Inactif' }
-  ];
+
 
   onMount(async () => {
     const isAuthenticated = await authService.verifyAuth();
@@ -52,7 +47,6 @@
       const currentFilter: UserFilter = {};
       if (searchTerm.trim()) currentFilter.search = searchTerm.trim();
       if (selectedRole) currentFilter.role = selectedRole;
-      if (selectedStatus !== '') currentFilter.isActive = selectedStatus === 'true';
       if (dateFrom) currentFilter.createdAfter = dateFrom;
       if (dateTo) currentFilter.createdBefore = dateTo;
 
@@ -81,14 +75,7 @@
     await loadUsers();
   }
 
-  async function toggleUserStatus(user: AppUser) {
-    try {
-      await userService.updateUserStatus(user.id, !user.isActive);
-      await loadUsers(); // Recharger la liste
-    } catch (err) {
-      error = err instanceof Error ? err.message : 'Erreur lors de la mise à jour du statut';
-    }
-  }
+
 
   function formatDate(dateString: string): string {
     if (!dateString) return 'N/A';
@@ -139,14 +126,7 @@
             on:change={handleSearch}
           />
         </div>
-        <div class="filter-group">
-          <Select
-            bind:value={selectedStatus}
-            options={statusOptions}
-            label="Filtrer par statut"
-            on:change={handleSearch}
-          />
-        </div>
+
         <div class="filter-group">
           <Button on:click={handleSearch} disabled={loading}>
             {loading ? 'Recherche...' : 'Rechercher'}
@@ -203,16 +183,14 @@
               <th>Nom d'affichage</th>
               <th>Email</th>
               <th>Rôles</th>
-              <th>Statut</th>
               <th>Date de création</th>
               <th>Dernière connexion</th>
               <th>Livres</th>
-              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {#each users as user}
-              <tr class:inactive={!user.isActive}>
+              <tr>
                 <td class="id-cell">{user.id}</td>
                 <td class="name-cell">
                   <div class="user-info">
@@ -236,11 +214,7 @@
                     {/each}
                   </div>
                 </td>
-                <td class="status-cell">
-                  <span class="status-badge" class:active={user.isActive} class:inactive={!user.isActive}>
-                    {user.isActive ? 'Actif' : 'Inactif'}
-                  </span>
-                </td>
+
                 <td class="date-cell">{formatDate(user.createdAt)}</td>
                 <td class="date-cell">{formatDate(user.lastLoginAt || '')}</td>
                 <td class="stats-cell">
@@ -250,15 +224,7 @@
                     <span class="stat">Terminés: {user.booksCompleted || 0}</span>
                   </div>
                 </td>
-                <td class="actions-cell">
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    on:click={() => toggleUserStatus(user)}
-                  >
-                    {user.isActive ? 'Désactiver' : 'Activer'}
-                  </Button>
-                </td>
+
               </tr>
             {/each}
           </tbody>
