@@ -6,8 +6,8 @@
   import { onMount } from 'svelte';
 
   const navItems = [
-    { href: '/livres', label: 'Livres' },
-    { href: '/utilisateurs', label: 'Utilisateurs' },
+    { href: '/books', label: 'Livres' },
+    { href: '/users', label: 'Utilisateurs' },
     { href: '/stats', label: 'Stats' },
     { href: '/options', label: 'Options' }
   ];
