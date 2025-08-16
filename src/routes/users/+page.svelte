@@ -211,7 +211,7 @@
                 <th>Rôles</th>
                 <th>Date de création</th>
                 <th>Dernière connexion</th>
-                <th>Livres</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -242,12 +242,14 @@
                   </td>
                   <td class="date-cell">{formatDate(user.createdAt)}</td>
                   <td class="date-cell">{formatDate(user.lastLoginAt || '')}</td>
-                  <td class="stats-cell">
-                    <div class="book-stats">
-                      <span class="stat">Total: {user.totalBooks || 0}</span>
-                      <span class="stat">En cours: {user.booksInProgress || 0}</span>
-                      <span class="stat">Terminés: {user.booksCompleted || 0}</span>
-                    </div>
+                  <td class="actions-cell">
+                    <Button 
+                      variant="secondary" 
+                      size="small"
+                      on:click={() => goto(`/users/${user.id}`)}
+                    >
+                      Voir détail
+                    </Button>
                   </td>
                 </tr>
               {/each}

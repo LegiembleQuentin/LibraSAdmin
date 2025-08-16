@@ -603,6 +603,11 @@
   opacity: 0.8;
 }
 
+.actions-cell {
+  min-width: 120px;
+  text-align: center;
+}
+
 @media (max-width: 768px) {
   .table-container {
     font-size: 0.8rem;
