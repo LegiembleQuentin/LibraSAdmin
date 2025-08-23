@@ -53,7 +53,17 @@
     transform: translateY(0);
   }
 
+  /* Style primaire par défaut */
+  .btn:not(.btn-secondary) {
+    background: var(--color-accent);
+    color: var(--color-black);
+    box-shadow: var(--shadow-sm);
+  }
 
+  .btn:not(.btn-secondary):hover:not(:disabled) {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
 
   .btn-secondary {
     background: rgba(255, 255, 255, 0.1);

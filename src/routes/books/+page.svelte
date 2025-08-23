@@ -176,14 +176,14 @@
     <div class="filters-header">
       <h3>Filtres de recherche</h3>
       <div class="filters-actions">
-        <Button on:click={openCreateModal} variant="primary" size="medium">
-          + Créer un livre
-        </Button>
         <Button on:click={applyFilters} variant="secondary" size="small">
           Appliquer
         </Button>
         <Button on:click={clearFilters} variant="secondary" size="small">
           Réinitialiser
+        </Button>
+        <Button on:click={openCreateModal} variant="primary" size="medium">
+          + Ajouter un livre
         </Button>
       </div>
     </div>
@@ -393,55 +393,7 @@
 />
 
 <style>
-  .admin-page {
-    padding: 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-
-  .filters-section {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius-lg);
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    backdrop-filter: blur(10px);
-  }
-
-  .filters-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .filters-header h3 {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: var(--color-accent);
-  }
-
-  .filters-actions {
-    display: flex;
-    gap: 0.75rem;
-  }
-
-  .filters-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-  }
-
-  .filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-
-
-
-
+  /* Styles spécifiques aux filtres des livres */
   .volume-filters,
   .note-filters,
   .date-filters {
@@ -497,52 +449,7 @@
     font-weight: 500;
   }
 
-  .content-section {
-    min-height: 400px;
-  }
-
-  .loading-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 4rem 2rem;
-    text-align: center;
-  }
-
-  .loading-spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
-    border-top: 3px solid var(--color-accent);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 1rem;
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 4rem 2rem;
-    text-align: center;
-  }
-
-  .empty-state h3 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    color: var(--color-accent);
-  }
-
-  .empty-state p {
-    color: rgba(255, 255, 255, 0.7);
-  }
+  /* Styles supprimés car maintenant dans le CSS global */
 
   .books-grid {
     display: grid;
@@ -702,14 +609,7 @@
   }
 
   @media (max-width: 768px) {
-    .admin-page {
-      padding: 1rem;
-    }
-
-    .filters-grid {
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
+    /* Styles déplacés dans le CSS global */
 
 
 
@@ -734,19 +634,6 @@
     }
   }
 
-  @media (max-width: 480px) {
-    .filters-header {
-      flex-direction: column;
-      gap: 1rem;
-      align-items: flex-start;
-    }
-
-    .filters-actions {
-      width: 100%;
-      justify-content: stretch;
-    }
-
-
-  }
+  /* Media queries 480px déplacées dans le CSS global */
 </style>
 

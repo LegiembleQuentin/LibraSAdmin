@@ -135,27 +135,28 @@ import ConfirmModal from '$lib/components/ConfirmModal.svelte';
 </svelte:head>
 
 <div class="admin-page">
-  <div class="page-header">
-    <div class="header-content">
-      <div class="header-left">
-        <Button on:click={goBack} variant="secondary" size="small">
-          ← Retour
-        </Button>
-        <h1>Détails</h1>
-      </div>
-      
-      {#if book}
-        <div class="header-actions">
-          <Button on:click={openEditModal} variant="primary" size="medium">
-            Modifier
+  <div class="book-detail-container">
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-left">
+          <Button on:click={goBack} variant="secondary" size="small">
+            ← Retour
           </Button>
-          <Button on:click={openDeleteModal} variant="secondary" size="medium" class="btn-delete">
-            Supprimer
-          </Button>
+          <h1>Détails</h1>
         </div>
-      {/if}
+        
+        {#if book}
+          <div class="header-actions">
+            <Button on:click={openEditModal} variant="primary" size="medium">
+              Modifier
+            </Button>
+            <Button on:click={openDeleteModal} variant="secondary" size="medium" class="btn-delete">
+              Supprimer
+            </Button>
+          </div>
+        {/if}
+      </div>
     </div>
-  </div>
 
   {#if loading}
     <div class="loading-state">
@@ -214,58 +215,66 @@ import ConfirmModal from '$lib/components/ConfirmModal.svelte';
         </div>
       </div>
 
-                    <div class="book-content">
-                <div class="content-section">
-                  <h3>Synopsis</h3>
-                  <p class="book-description">
-                    {book.synopsis || 'Aucun synopsis disponible.'}
-                  </p>
-                </div>
-
-                {#if book.tags && book.tags.length > 0}
-                  <div class="content-section">
-                    <h3>Tags</h3>
-                    <div class="book-tags">
-                      {#each book.tags as tag}
-                        <span class="tag">{tag.name}</span>
-                      {/each}
-                    </div>
+      <div class="book-content">
+        <div class="content-section">
+          <h3>Informations détaillées</h3>
+          <table class="book-details-table">
+            <tbody>
+              <tr>
+                <th>Synopsis</th>
+                <td>{book.synopsis || 'Aucun synopsis disponible.'}</td>
+              </tr>
+              {#if book.tags && book.tags.length > 0}
+              <tr>
+                <th>Tags</th>
+                <td>
+                  <div class="book-tags">
+                    {#each book.tags as tag}
+                      <span class="tag">{tag.name}</span>
+                    {/each}
                   </div>
-                {/if}
+                </td>
+              </tr>
+              {/if}
+              <tr>
+                <th>Date de création</th>
+                <td>{book.createdAt ? new Date(book.createdAt).toLocaleDateString('fr-FR') : 'N/A'}</td>
+              </tr>
+              <tr>
+                <th>Dernière modification</th>
+                <td>{book.modifiedAt ? new Date(book.modifiedAt).toLocaleDateString('fr-FR') : 'N/A'}</td>
+              </tr>
+              <tr>
+                <th>Nombre de volumes</th>
+                <td>{book.nbVolume}</td>
+              </tr>
+              <tr>
+                <th>Note moyenne</th>
+                <td>{book.note ? book.note.toFixed(1) + '/10' : 'Non noté'}</td>
+              </tr>
+              <tr>
+                <th>Nombre de visites</th>
+                <td>{book.nbVisit || 0}</td>
+              </tr>
+              <tr>
+                <th>Statut</th>
+                <td>
+                  <span class="status-badge" class:completed={book.isCompleted}>
+                    {book.isCompleted ? 'Complété' : 'En cours'}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-                <div class="content-section">
-                  <h3>Informations</h3>
-                  <div class="info-grid">
-                    <div class="date-group">
-                      <div class="info-item">
-                        <span class="info-label">Date de début</span>
-                        <span class="info-value">
-                          {book.dateStart ? new Date(book.dateStart).toLocaleDateString('fr-FR') : 'Non définie'}
-                        </span>
-                      </div>
-                      
-                      <div class="info-item">
-                        <span class="info-label">Date de fin</span>
-                        <span class="info-value">
-                          {book.dateEnd ? new Date(book.dateEnd).toLocaleDateString('fr-FR') : 'Non définie'}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div class="info-item">
-                      <span class="info-label">ID</span>
-                      <span class="info-value id-value">{book.id}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="content-section">
-                  <h3>Statistiques</h3>
-                  <BookStats stats={{
-                    totalUsers: book.totalUsers || 0,
-                    averageVolume: book.averageVolume || 0,
-                    usersInProgress: book.usersInProgress || 0,
-                    usersCompleted: book.usersCompleted || 0,
+        <div class="content-section">
+          <h3>Statistiques</h3>
+          <BookStats stats={{
+            totalUsers: book.totalUsers || 0,
+            averageVolume: book.averageVolume || 0,
+            usersInProgress: book.usersInProgress || 0,
+            usersCompleted: book.usersCompleted || 0,
                     usersNotStarted: book.usersNotStarted || 0,
                     averageProgress: book.averageProgress || 0,
                     completionRate: book.completionRate || 0,
@@ -285,6 +294,7 @@ import ConfirmModal from '$lib/components/ConfirmModal.svelte';
       <span class="error-text">Livre non trouvé</span>
     </div>
   {/if}
+  </div>
 </div>
 
 {#if book}
@@ -316,6 +326,11 @@ import ConfirmModal from '$lib/components/ConfirmModal.svelte';
     background: var(--color-bg);
     color: var(--color-text);
     padding: 2rem;
+  }
+
+  .book-detail-container {
+    max-width: 1400px;
+    margin: 0 auto;
   }
 
   .page-header {
@@ -531,10 +546,33 @@ import ConfirmModal from '$lib/components/ConfirmModal.svelte';
     padding-bottom: 0.5rem;
   }
 
-  .book-description {
-    margin: 0;
-    line-height: 1.6;
+
+
+  .book-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+
+  .book-details-table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--color-white);
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    width: 200px;
+    background: rgba(255, 255, 255, 0.05);
+    vertical-align: top;
+  }
+
+  .book-details-table td {
+    padding: 1rem;
     color: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .book-details-table tr:hover {
+    background: rgba(255, 255, 255, 0.02);
   }
 
   .book-tags {
@@ -553,48 +591,22 @@ import ConfirmModal from '$lib/components/ConfirmModal.svelte';
     border: 1px solid rgba(255, 232, 21, 0.2);
   }
 
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-  }
-
-  .info-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .date-group {
-    display: flex;
-    gap: 2rem;
-    grid-column: span 2;
-  }
-  
-  .date-group .info-item {
-    flex: 1;
-  }
-
-  .info-label {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.6);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .info-value {
-    font-size: 1rem;
+  .status-badge {
+    background: rgba(255, 255, 255, 0.1);
     color: var(--color-white);
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
     font-weight: 500;
   }
 
-  .id-value {
-    font-family: monospace;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
+  .status-badge.completed {
+    background: rgba(34, 197, 94, 0.2);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
   }
+
+
 
   @media (max-width: 768px) {
     .admin-page {
@@ -620,14 +632,14 @@ import ConfirmModal from '$lib/components/ConfirmModal.svelte';
       gap: 1rem;
     }
 
-    .info-grid {
-      grid-template-columns: 1fr;
+    .book-details-table th {
+      width: 150px;
+      font-size: 0.9rem;
     }
-    
-    .date-group {
-      flex-direction: column;
-      gap: 1rem;
-      grid-column: span 1;
+
+    .book-details-table th,
+    .book-details-table td {
+      padding: 0.75rem;
     }
   }
 </style>
