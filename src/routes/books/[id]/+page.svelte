@@ -8,6 +8,7 @@ import Button from '$lib/components/Button.svelte';
 import BookStats from '$lib/components/BookStats.svelte';
 import BookEditModal from '$lib/components/BookEditModal.svelte';
 import ConfirmModal from '$lib/components/ConfirmModal.svelte';
+import Modal from '$lib/components/Modal.svelte';
 
   export let data: { id: string };
 
@@ -19,6 +20,10 @@ import ConfirmModal from '$lib/components/ConfirmModal.svelte';
   let isDeleting = false;
   let availableAuthors: Author[] = [];
   let availableTags: Tag[] = [];
+  let showImageModal = false;
+  let selectedFile: File | null = null;
+  let previewUrl: string | null = null;
+  let isUploading = false;
 
   onMount(async () => {
     try {
@@ -128,6 +133,44 @@ import ConfirmModal from '$lib/components/ConfirmModal.svelte';
       closeDeleteModal();
     }
   }
+
+  function openImageModal() {
+    selectedFile = null;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    previewUrl = null;
+    showImageModal = true;
+  }
+
+  function closeImageModal() {
+    showImageModal = false;
+    selectedFile = null;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    previewUrl = null;
+  }
+
+  function onFileChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const file = input.files && input.files[0];
+    if (!file) return;
+    selectedFile = file;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    previewUrl = URL.createObjectURL(file);
+  }
+
+  async function submitImage() {
+    if (!book || !selectedFile) return;
+    try {
+      isUploading = true;
+      const updated = await bookService.changeBookImage(book.id, selectedFile);
+      book = updated;
+      closeImageModal();
+    } catch (err) {
+      console.error("Erreur lors du changement d'image", err);
+      error = err instanceof Error ? err.message : "Erreur lors du changement d'image";
+    } finally {
+      isUploading = false;
+    }
+  }
 </script>
 
 <svelte:head>
@@ -172,13 +215,15 @@ import ConfirmModal from '$lib/components/ConfirmModal.svelte';
     <div class="book-detail">
       <div class="book-header">
         <div class="book-image-container">
-          {#if book.imgUrl}
-            <img src={book.imgUrl} alt={book.name} class="book-image" />
-          {:else}
-            <div class="book-placeholder">
-              <span>📚</span>
-            </div>
-          {/if}
+          <button class="image-button" on:click={openImageModal} title="Changer l'image">
+            {#if book.imgUrl}
+              <img src={book.imgUrl} alt={book.name} class="book-image" />
+            {:else}
+              <div class="book-placeholder">
+                <span>📚</span>
+              </div>
+            {/if}
+          </button>
         </div>
         
         <div class="book-info">
@@ -320,6 +365,27 @@ import ConfirmModal from '$lib/components/ConfirmModal.svelte';
   on:cancel={closeDeleteModal}
 />
 
+<Modal isOpen={showImageModal} title="Changer l'image" size="small" on:close={closeImageModal}>
+  <div class="upload-container">
+    <div class="preview">
+      {#if previewUrl}
+        <img src={previewUrl} alt="Prévisualisation" />
+      {:else if book?.imgUrl}
+        <img src={book.imgUrl} alt="Image actuelle" />
+      {:else}
+        <div class="no-image">Aucune image</div>
+      {/if}
+    </div>
+    <input type="file" accept="image/*" on:change={onFileChange} />
+  </div>
+  <div slot="footer">
+    <Button variant="secondary" on:click={closeImageModal}>Annuler</Button>
+    <Button variant="primary" on:click={submitImage} disabled={!selectedFile || isUploading}>
+      {isUploading ? 'Envoi...' : 'Valider'}
+    </Button>
+  </div>
+</Modal>
+
 <style>
   .admin-page {
     min-height: 100vh;
@@ -327,7 +393,8 @@ import ConfirmModal from '$lib/components/ConfirmModal.svelte';
     color: var(--color-text);
     padding: 2rem;
   }
-
+  .image-button { display: block; padding: 0; border: none; background: transparent; width: 100%; height: 100%; cursor: pointer; }
+  .image-button:focus { outline: 2px solid var(--color-accent); }
   .book-detail-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -606,6 +673,10 @@ import ConfirmModal from '$lib/components/ConfirmModal.svelte';
     border: 1px solid rgba(34, 197, 94, 0.3);
   }
 
+  .upload-container { display: flex; flex-direction: column; gap: 1rem; }
+  .preview { width: 100%; height: 260px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .no-image { color: var(--color-text-secondary); }
 
 
   @media (max-width: 768px) {

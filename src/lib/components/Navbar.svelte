@@ -9,7 +9,6 @@
     { href: '/books', label: 'Livres' },
     { href: '/users', label: 'Utilisateurs' },
     { href: '/stats', label: 'Stats' },
-    { href: '/options', label: 'Options' }
   ];
 
   let isMenuOpen = false;

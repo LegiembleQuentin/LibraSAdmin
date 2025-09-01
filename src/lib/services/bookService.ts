@@ -145,6 +145,27 @@ class BookService {
       throw new Error('Erreur lors de la suppression du livre');
     }
   }
+
+  async changeBookImage(id: number, file: File): Promise<Book> {
+    const token = localStorage.getItem('admin_token');
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.ADMIN_BOOKS)}/img/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token || ''}`,
+        'API-KEY': API_CONFIG.API_KEY
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error("Erreur lors du changement d'image");
+    }
+
+    return response.json();
+  }
 }
 
 export const bookService = new BookService();
