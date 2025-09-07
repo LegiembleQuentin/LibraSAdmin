@@ -55,31 +55,13 @@ import Modal from '$lib/components/Modal.svelte';
 
   async function loadAuthorsAndTags() {
     try {
-      const books = await bookService.getAllBooks();
-      const authorsMap = new Map<number, Author>();
-      const tagsMap = new Map<number, Tag>();
+      const [authors, tags] = await Promise.all([
+        bookService.getAllAuthors(),
+        bookService.getAllTags()
+      ]);
       
-      if (books && Array.isArray(books)) {
-        books.forEach(book => {
-          if (book.authors && Array.isArray(book.authors)) {
-            book.authors.forEach(author => {
-              if (author.id && author.name) {
-                authorsMap.set(author.id, author);
-              }
-            });
-          }
-          if (book.tags && Array.isArray(book.tags)) {
-            book.tags.forEach(tag => {
-              if (tag.id && tag.name) {
-                tagsMap.set(tag.id, tag);
-              }
-            });
-          }
-        });
-      }
-      
-      availableAuthors = Array.from(authorsMap.values());
-      availableTags = Array.from(tagsMap.values());
+      availableAuthors = authors || [];
+      availableTags = tags || [];
     } catch (err) {
       console.error('Error loading authors and tags:', err);
       availableAuthors = [];
