@@ -9,10 +9,11 @@ export const API_CONFIG = {
     ADMIN_BOOKS: '/api/admin/books',
     ADMIN_BOOKS_SEARCH: '/api/admin/books/search',
     ADMIN_USERS: '/api/admin/users',
-    ADMIN_STATS: '/api/admin/stats'
+    ADMIN_STATS: '/api/admin/stats',
+    TAGS: '/api/tags'
   }
 };
 
 export const buildApiUrl = (endpoint: string): string => {
   return `${API_CONFIG.BASE_URL}${endpoint}`;
-}; 
+};

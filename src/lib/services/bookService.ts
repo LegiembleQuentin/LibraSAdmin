@@ -166,6 +166,32 @@ class BookService {
 
     return response.json();
   }
+
+  async getAllAuthors(): Promise<Author[]> {
+    const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.ADMIN_BOOKS)}/authors`, {
+      method: 'GET',
+      headers: this.getAuthHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des auteurs');
+    }
+
+    return response.json();
+  }
+
+  async getAllTags(): Promise<Tag[]> {
+    const response = await fetch(`${buildApiUrl(API_CONFIG.ENDPOINTS.TAGS)}`, {
+      method: 'GET',
+      headers: this.getAuthHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des tags');
+    }
+
+    return response.json();
+  }
 }
 
 export const bookService = new BookService();
